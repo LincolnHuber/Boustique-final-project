@@ -14,11 +14,9 @@ public class Driver {
     CourseList courseList = new CourseList();
     //System.out.printf("File accpeted\n");
     fillCourseList(lect,  courseList);
-
-
-    courseList.printList();
-    int [] index = courseList.getIndex(22658);
-    System.out.printf("\n\n %d %s %s %s %s %s %d\n",courseList.getCrn(index), courseList.getPrefix(index), courseList.getTitle(index), courseList.getClassLevel(index), courseList.getModality(index), courseList.getLocation(index), courseList.getCreditHours(index));
+  
+     courseList.printList();
+    
      int choice;
           do {
               System.out.println("Main Menu\n1 : Student Management\n2 : Course Management\n0 : Exit");
@@ -123,13 +121,13 @@ public class Driver {
 
       //when len is 8 that means a course that takes place irl is being added
       if(len == 8) {
-        newCourse = new Course(Integer.parseInt(splitLine[0]), splitLine[1], splitLine[2], splitLine[3], splitLine[4], splitLine[5], splitLine[6], Integer.parseInt(splitLine[7]));
+        newCourse = new Course(Integer.parseInt(splitLine[0]), splitLine[1], splitLine[2], splitLine[3], splitLine[4], splitLine[5], splitLine[6], Integer.parseInt(splitLine[7].trim()));
         courseList.addCourse(newCourse);
         prevCourse = newCourse;
       }
       //when len is 6 an online course is being added
       else if(len == 6) {
-        newCourse = new Course(Integer.parseInt(splitLine[0]), splitLine[1], splitLine[2], splitLine[3], splitLine[4], Integer.parseInt(splitLine[5]));
+        newCourse = new Course(Integer.parseInt(splitLine[0]), splitLine[1], splitLine[2], splitLine[3], splitLine[4], Integer.parseInt(splitLine[5].trim()));
         courseList.addCourse(newCourse);
         prevCourse = newCourse;
       }
@@ -294,20 +292,21 @@ class CourseList{
       //if crn matches and course is enabled course is printed out
       if((course.getCrn() == crn) && (course.getEnabled() == true)) {
 
-        System.out.printf("\n\n %d %s %s %s %s %s %d\n",course.getCrn(), course.getPrefix(), course.getTitle(), course.getClassLevel(), course.getModality(), course.getLocation(), course.getCreditHours());
+    	System.out.printf("[ %d,%s,%s ]\n\n", course.getCrn(), course.getPrefix(), course.getTitle());
         return;
       }
-      //goes through any labs under that course and if they match crn and its enabled, it prints out that lab
+      //goes through any labs under that course and if they match crn and its enabled, it prints out the course the lab is for and then the lab
       if(course.hasLabs()) {
-        Lab tmpLab = course.getSpecificLab(crn);
+        Lab tmpLab = course.getSpecificLab(crn); //checks all the labs under a course if they match the crn, if it does it fetchs the lab, otherwise its null
 
         if(tmpLab != null) {
-          System.out.println(tmpLab);
+          System.out.printf("Lab for [ %d,%s,%s ]\n", course.getCrn(), course.getPrefix(), course.getTitle());
+          System.out.printf("Lab Room %s\n\n", tmpLab.getLocation());
           return;
         }
       }
     }
-    System.out.println("Course is not available: invalid crn ");
+    System.out.println("Course/Lab is not available: invalid crn\n");
   }
 
 
@@ -315,6 +314,7 @@ class CourseList{
     for(Course course : list){
       System.out.println(course);
     }
+    System.out.println();
   }
 
 
@@ -327,15 +327,17 @@ class CourseList{
         //disables course if it doesnt have labs
         if(!course.hasLabs()) {
           course.setEnabled(false);
+          System.out.printf("[ %d,%s,%s ] deleted!\n\n",course.getCrn(), course.getPrefix(), course.getTitle());
           return;
         }
         //disables course if it has labs and there all empty
         if(course.allLabsEmpty()) {
           course.setEnabled(false);
           course.allLabsSetEnabled(false);
+          System.out.printf("[ %d,%s,%s ] deleted!\n\n",course.getCrn(), course.getPrefix(), course.getTitle());
           return;
         }
-        System.out.println("course is not empty so it cant be deleted");
+        System.out.println("course or its labs are not empty so it cant be deleted");
       }
 
 
@@ -345,6 +347,7 @@ class CourseList{
         if(tmpLab != null) {
           if(tmpLab.empty()) {
             tmpLab.setEnabled(false);
+            System.out.printf("Lab %d %s deleted!\n\n",tmpLab.getCrn(), tmpLab.getLocation() );
             return;
           }
           else {
@@ -354,6 +357,7 @@ class CourseList{
         }
       }
     }
+    System.out.printf("Class could not be found: invalid crn\n\n");
   }
 }
 
