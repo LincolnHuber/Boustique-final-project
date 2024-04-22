@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.*;
+import java.io.Serializable;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 public class Driver {
@@ -49,12 +50,12 @@ public class Driver {
   public static void CourseManagementMenu()
   {
     char courseChoice;
-        Scanner CourseScanner = new Scanner(System.in);
+        Scanner courseScanner = new Scanner(System.in);
         do {
           System.out.println("\nCourse Management Menu\n\nChoose one of:\n\n  A - Search for a class or lab using the class/lab number\n  B - delete a class\n  C - Add a lab to a class\n  X - Back to main menu ");
-            System.out.print("\n\nEnter your selection: ");
+          System.out.print("\n\nEnter your selection: ");
             //convert to uppercase directly after input
-            courseChoice = CourseScanner.next().toUpperCase().charAt(0);
+            courseChoice = courseScanner.next().toUpperCase().charAt(0);
             switch (courseChoice) { //char switch statement, doesnt crash when inputting integers
             case 'A':
               System.out.print("Class/lab search function \n");
@@ -70,7 +71,7 @@ public class Driver {
                break;
             default:
                 System.out.println("Invalid choice. Please try again.\n");
-        }
+            }
         } while (courseChoice != 'X');
 
     }
@@ -78,12 +79,12 @@ public class Driver {
   public static void StudentManagementMenu()
   {
       char studentChoice;
-          Scanner StudentScanner = new Scanner(System.in);
+    try (Scanner studentScanner = new Scanner(System.in)) {
           do {
             System.out.println("\nCourse Management Menu\n\nChoose one of:\n\n  A - Search for a class or lab using the class/lab number\n  B - delete a class\n  C - Add a lab to a class\n  X - Back to main menu ");
               System.out.print("\n\nEnter your selection: ");
               //convert to uppercase directly after input
-              studentChoice = StudentScanner.next().toUpperCase().charAt(0);
+              studentChoice = studentScanner.next().toUpperCase().charAt(0);
               switch (studentChoice) { //char switch statement, doesnt crash when inputting integers
             case 'A':
               System.out.print("Student search\n");
@@ -102,8 +103,9 @@ public class Driver {
                break;
             default:
                 System.out.println("Invalid choice. Please try again.\n");
-        }		
+              }		
           } while (studentChoice != 'X');	
+    }
   }
 
   //fills courselist with courses from inputed file
@@ -250,8 +252,13 @@ class CourseList{
         }
       }
     }
-    //System.out.println("course could not be found for that crn");
-    return null;
+    // If the CRN is not found, throw an exception
+    throw new IllegalArgumentException("course could not be found for crn: " + crn);
+    catch(IllegalArgumentException e){
+      System.out.println(e);
+      return null;
+    }
+    
   }
 
   public String getLocation(int[] index) {
@@ -762,8 +769,9 @@ class PhdStudent extends GraduateStudent
 
 //exception class here
 
-class IdException extends Exception 
+class IdException extends Exception implements Serializable 
 {
+  private static final long serialVersionUID = 1L;
   public String excMsg()
   {
     return "Invalid ID format. Must be 'xx0000'";
