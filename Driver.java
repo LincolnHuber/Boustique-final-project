@@ -17,8 +17,7 @@ public class Driver {
     CourseList courseList = new CourseList();
     //System.out.printf("File accpeted\n");
     fillCourseList(lect,  courseList);
-  
-     courseList.printList();
+    courseList.printList();
     
      
      int choice;
@@ -253,7 +252,9 @@ class CourseList{
       }
     }
     // If the CRN is not found, throw an exception
-    throw new IllegalArgumentException("course could not be found for crn: " + crn);
+    try {
+    	throw new IllegalArgumentException("course could not be found for crn: " + crn);
+    }
     catch(IllegalArgumentException e){
       System.out.println(e);
       return null;
