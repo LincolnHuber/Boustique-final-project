@@ -1,5 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.*;
@@ -17,6 +19,7 @@ public class Driver {
   
      courseList.printList();
     
+     
      int choice;
           do {
               System.out.println("Main Menu\n1 : Student Management\n2 : Course Management\n0 : Exit");
@@ -39,7 +42,8 @@ public class Driver {
     //courseList.deleteCourse(51180);
     //courseList.searchList(51180);
     //courseList.searchList(32658);
-
+    courseList.deleteCourse(12658);
+    closeFile(lect, courseList);
   }
 
   public static void CourseManagementMenu()
@@ -161,7 +165,44 @@ public class Driver {
     return fileScanner;
 
   }
+  
+  //prints to file all courses and labs not including the disabled ones
+  public static void closeFile(File lect, CourseList courseList) {
+	  PrintWriter writer = null;
+	  try {
+		  writer = new PrintWriter(lect);
+		  ArrayList <Course> list = courseList.getList();
+		  for(Course course : list) {
+			  if(course.getEnabled()) {
+				  if((course.getModality()).compareToIgnoreCase("online") == 0) { //check if its an online class as it doesnt have to print if it has labs or its location
+					  writer.printf("%d,%s,%s,%s,%s,%d\n", course.getCrn(), course.getPrefix() , course.getTitle(), course.getClassLevel(), course.getModality(), course.getCreditHours());
+				  }
+				  else {//if its not online it has to print out all of its fields
+					  writer.printf("%d,%s,%s,%s,%s,%s,%s,%d\n", course.getCrn(), course.getPrefix() , course.getTitle(), course.getClassLevel(), course.getModality(), course.getLocation(), course.getHasLab(), course.getCreditHours());
+				  }
+				  if(course.hasLabs()) { //checks if course has labs and if it does it gets labs
+					  ArrayList <Lab> labList = course.getLabList();
+					  for(Lab lab : labList) {//prints all labs to file that are enabled
+						  if(lab.getEnabled()) {
+							  writer.printf("%d,%s\n", lab.getCrn(), lab.getLocation());
+						  }
+					  }
+				  }
+			  }
+		  }
+	  }
+	  catch(Exception e) {
+		  System.out.println("File could not be closed");
+		  System.exit(0);
+	  
+	  }
+	  finally {
+		  if(writer != null) {
+			  writer.close();
+		  }
+	  }
 
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -173,7 +214,10 @@ class CourseList{
   public CourseList() {
     list = new ArrayList <Course>();
   }
-
+  
+  public ArrayList <Course> getList() {
+	  return list;
+  }
 
   public void addCourse(Course course) {
     list.add(course);
@@ -206,7 +250,7 @@ class CourseList{
         }
       }
     }
-    System.out.println("course could not be found for that crn");
+    //System.out.println("course could not be found for that crn");
     return null;
   }
 
@@ -359,7 +403,21 @@ class CourseList{
     }
     System.out.printf("Class could not be found: invalid crn\n\n");
   }
+  
+  //gets course if its exists otherwise returns null
+  public Course getCourse(int crn) {
+	  int len = list.size();
+	  for(int i = 0; i < len; i++) {
+		  if(list.get(i).getCrn() == crn) {
+			  return list.get(i);
+		  }
+	  }
+	  return null; //returns null as crn wasn't found
+	 
+  }
 }
+  
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -552,9 +610,15 @@ class Course {
   public int getCreditHours() {
     return creditHours;
   }
+  
+  public ArrayList <Lab> getLabList() {
+	  return labList;
+  }
 
-
-
+  public String getHasLab() {
+	  return hasLab;
+  }
+  
 }
 
 class Lab {
@@ -705,5 +769,4 @@ class IdException extends Exception
     return "Invalid ID format. Must be 'xx0000'";
     //to be thrown in a try block after checking that an ID is wrong format or is a duplicate
   }
-
 }
