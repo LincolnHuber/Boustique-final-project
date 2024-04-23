@@ -624,9 +624,9 @@ abstract class Student
 
 class UndergraduateStudent extends Student
 {
-  private String courses; //string array might be better since multiple courses?
+  private String[] courses; //string array might be better since multiple courses?
 
-  public UndergraduateStudent (String name, int id, String courses)
+  public UndergraduateStudent (String name, int id, String[] courses)
   {
     super (name, id);
     this.courses = courses;
@@ -648,9 +648,9 @@ abstract class GraduateStudent extends Student
 
 class MsStudent extends GraduateStudent
 {
-  private String courses; //string array might be better since multiple courses?
+  private String[] courses; //string array might be better since multiple courses?
   
-  public MsStudent(String name, int id, String courses)
+  public MsStudent(String name, int id, String[] courses)
   {
     super (name, id);
     this.courses = courses;
