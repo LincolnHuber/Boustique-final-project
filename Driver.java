@@ -19,6 +19,7 @@ public class Driver {
     fillCourseList(lect,  courseList);
     courseList.printList();
     
+    System.out.println(courseList.getLab(30008));
      
      int choice;
           do {
@@ -224,119 +225,7 @@ class CourseList{
     list.add(course);
   }
 
-  //gets an index for a course or lab which can be used to get the variable you want through its respective get....(index) function
-  //the index is actually a list of integers with 2 spots, 
-  //index[0] is the index of the course
-  //index[1] is the index of the lab within its respective course, if what you searched for was a course and not a lab this value will be set to -1
-  public int[] getIndex(int crn) {
-    int [] courseIndex = new int[2];
-    int len = list.size();
-
-    for(int i = 0; i < len; i++) {
-      Course tmpCourse = list.get(i);
-      if(tmpCourse.getCrn() == crn) {
-        courseIndex[0] = i;
-        courseIndex[1] = -1;
-        return courseIndex;
-      }
-      if(tmpCourse.hasLabs()) {
-        int labListLen = tmpCourse.getLabListLen();
-        for(int j = 0; j < labListLen; j++) {
-          Lab tmpLab = tmpCourse.getLab(j);
-          if(tmpLab.getCrn() == crn) {
-            courseIndex[0] = i;
-            courseIndex[1] = j;
-            return courseIndex;
-          }
-        }
-      }
-    }
-    // If the CRN is not found, throw an exception
-    try {
-    	throw new IllegalArgumentException("course could not be found for crn: " + crn);
-    }
-    catch(IllegalArgumentException e){
-      System.out.println(e);
-      return null;
-    }
-    
-  }
-
-  public String getLocation(int[] index) {
-    Course tmpCourse = list.get(index[0]);
-    if(index[1] == -1) {
-      return tmpCourse.getLocation();
-    }
-    else {
-      return tmpCourse.getLab(index[1]).getLocation();
-    }
-  }
-
-  public int getCrn(int[] index) {
-    Course tmpCourse = list.get(index[0]);
-    if(index[1] == -1) {
-      return tmpCourse.getCrn();
-    }
-    else {
-      return tmpCourse.getLab(index[1]).getCrn();
-    }
-  }
-
-  public String getClassLevel(int[] index) {
-    Course tmpCourse = list.get(index[0]);
-    if(index[1] == -1) {
-      return tmpCourse.getClassLevel();
-    }
-    else {
-      System.out.println("Labs do not have this field");
-      return null;
-    }
-  }
-
-  public int getCreditHours(int[] index) {
-    Course tmpCourse = list.get(index[0]);
-    if(index[1] == -1) {
-      return tmpCourse.getCreditHours();
-    }
-    else {
-      System.out.println("Labs do not have this field");
-      return 0;
-    }
-  }
-
-  public String getModality(int[] index) {
-    Course tmpCourse = list.get(index[0]);
-    if(index[1] == -1) {
-      return tmpCourse.getModality();
-    }
-    else {
-      System.out.println("Labs do not have this field");
-      return null;
-    }
-  }
-
-  public String getPrefix(int[] index) {
-    Course tmpCourse = list.get(index[0]);
-    if(index[1] == -1) {
-      return tmpCourse.getPrefix();
-    }
-    else {
-      System.out.println("Labs do not have this field");
-      return null;
-    }
-  }
-
-  public String getTitle(int[] index) {
-    Course tmpCourse = list.get(index[0]);
-    if(index[1] == -1) {
-      return tmpCourse.getTitle();
-    }
-    else {
-      System.out.println("Labs do not have this field");
-      return null;
-    }
-  }
-
+  
 
   //search for a lab or course through there crn and prints it
   public void searchList(int crn){
@@ -423,8 +312,33 @@ class CourseList{
 	  return null; //returns null as crn wasn't found
 	 
   }
-}
   
+  //gets course if its exists otherwise returns null
+  public Course getCourse(String preFix) {
+	  int len = list.size();
+	  for(int i = 0; i < len; i++) {
+		  if((list.get(i).getPrefix()).compareToIgnoreCase(preFix) == 0) {
+			  return list.get(i);
+		  }
+	  }
+	  return null; //returns null as prefix wasn't found
+	 
+  }
+  	//gets lab if its valid otherwise returns null
+	public Lab getLab(int crn) {
+		for(Course course : list) {
+			if(course.hasLabs()) {
+				Lab lab = course.getSpecificLab(crn); //if there is lab with matching crn it is returned otherwise its null
+				if(lab != null) {
+					return lab; // returns found lab
+				}	
+			}
+		}
+		return null; //couldnt find a lab with crn
+	}
+}
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
