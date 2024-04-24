@@ -18,9 +18,15 @@ public class Driver {
     //System.out.printf("File accpeted\n");
     fillCourseList(lect,  courseList);
     courseList.printList();
-    
+
     System.out.println(courseList.getLab(30008));
-     
+
+    /*
+    //all students will be stored here in case other parts of the program need to access, if there is an issue with them being in main pls lmk
+    ArrayList<Student> ugradStudList = new ArrayList<Student>();
+    ArrayList<Student> msStudList = new ArrayList<Student>();
+    ArrayList<Student> phdStudList = new ArrayList<Student>();
+    */
      int choice;
           do {
               System.out.println("Main Menu\n1 : Student Management\n2 : Course Management\n0 : Exit");
@@ -28,7 +34,7 @@ public class Driver {
               choice = scanner.nextInt();
               switch (choice) {
                   case 1:
-                    StudentManagementMenu();
+                    StudentManagementMenu(courseList);
                       break;
                   case 2:
                     CourseManagementMenu();
@@ -76,36 +82,239 @@ public class Driver {
 
     }
 
-  public static void StudentManagementMenu()
+  public static void StudentManagementMenu(CourseList courseList)
   {
-      char studentChoice;
-    try (Scanner studentScanner = new Scanner(System.in)) {
-          do {
-            System.out.println("\nCourse Management Menu\n\nChoose one of:\n\n  A - Search for a class or lab using the class/lab number\n  B - delete a class\n  C - Add a lab to a class\n  X - Back to main menu ");
-              System.out.print("\n\nEnter your selection: ");
-              //convert to uppercase directly after input
-              studentChoice = studentScanner.next().toUpperCase().charAt(0);
-              switch (studentChoice) { //char switch statement, doesnt crash when inputting integers
-            case 'A':
-              System.out.print("Student search\n");
+    char studentChoice;
+    String tempID;
+    String tempType;
+    String tempName;
+    String tempCourses;
+    String tempAdvisor;
+    String tempSubject;
+
+    Scanner charScan = new Scanner(System.in);
+    Scanner stringScan = new Scanner(System.in); 
+    Scanner intScan = new Scanner(System.in);
+    //ik these are technically not necessary but it makes it simpler to me, if needed to change back to just one scanner lmk - Chris
+    
+    do 
+    {
+      System.out.println("\nStudent Management Menu\n\nChoose one of:\n\n  A - Add a student\n  B - Delete a student\n  C - Print invoice by student ID\n  D - Print all students\n  X - Back to main menu ");
+      
+      System.out.print("\n\nEnter your selection: ");
+      
+      //convert to uppercase directly after input
+      studentChoice = charScan.next().toUpperCase().charAt(0);
+      System.out.print("\n\n");
+      
+      switch (studentChoice) 
+      { //char switch statement, doesnt crash when inputting integers
+        case 'A': ////////////////////////////////ADD FUNCTION////////////////////////////////////////////
+          System.out.print("Enter Student’s ID: ");
+          tempID = stringScan.nextLine().toUpperCase(); //toUpper to make search easier
+          
+          if (checkID(tempID) == true) //checks if id is in correct format
+          {
+            System.out.println("VALID ID (see comment)\n"); //checkID() still needs to be updated to check if id is a duplicate
+          }
+          else
+          { 
+            try
+            {
+              throw new IdException();
+            }
+            catch (IdException e)
+            {
+              System.out.println(e.excMsg());
+            }
+
+            break;
+          }
+          
+          System.out.print("Enter Student Type (PhD, MS or Undergrad): ");
+          tempType = stringScan.nextLine().toUpperCase(); //toUpper to make search easier
+          System.out.print("\n\n");
+
+          if (tempType.equals("PHD")) //PHD ADD SECTION///////////////////////////////////
+          {
+            System.out.print("Enter Student Name: ");
+            tempName = stringScan.nextLine();
+            System.out.print("\n\n");
+
+            System.out.print("Enter Advisor Name: ");
+            tempAdvisor = stringScan.nextLine();
+            System.out.print("\n\n");
+
+            System.out.print("Enter Research Subject: ");
+            tempSubject = stringScan.nextLine();
+            System.out.print("\n\n");
+
+            System.out.print("Enter Supervised Lab Courses Separated by Comma (Ex. 12345,67890): ");
+            tempCourses = stringScan.nextLine();
+            System.out.print("\n\n");
+            String[] tempCourseList = tempCourses.split(","); //seperate courses into array
+
+            ArrayList<Integer> tempCrnList  = new ArrayList<Integer>();
+
+            for(String test : tempCourseList) //converts string array to int array
+            {
+              tempCrnList.add(Integer.parseInt(test));
+            }
+
+            for (int test : tempCrnList) //verify that all input courses are valid
+            {
+              Course testCourse = courseList.getCourse(test);
+              //System.out.println(test); // <- prints the int getting passed to getCourse()
+
+              if (testCourse == null)
+              {
+                System.out.println("One or more courses were not valid");
                 break;
-            case 'B':
-              System.out.print("Delete student\n");
+              }
+            }
+
+            Student newStudent = new PhdStudent(tempName, tempID, tempAdvisor, tempSubject, tempCrnList);
+            //refer to comment on line 206
+          }
+          else if (tempType.equals("MS")) //MS ADD SECTION///////////////////////////////////
+          {
+            System.out.print("Enter Student Name: ");
+            tempName = stringScan.nextLine();
+            System.out.print("\n\n");
+
+            System.out.print("Enter Courses Separated by Comma (Ex. abc1234,def5678): ");
+            tempCourses = stringScan.nextLine().toUpperCase();
+            System.out.print("\n\n");
+            String[] tempCourseList = tempCourses.split(","); //seperate courses into array
+
+            for (String test : tempCourseList) //verify that all input courses are valid
+            {
+              Course testCourse = courseList.getCourse(test);
+              //System.out.println(test); // <- prints the string getting passed to getCourse()
+
+              if (testCourse == null)
+              {
+                System.out.println("One or more courses were not valid");
                 break;
-            case 'C':
-                System.out.println("Print fee invoice\n");
+              }
+            }
+
+
+            
+            Student newStudent = new MsStudent(tempName, tempID, tempCourseList);
+
+            //based on my testing, at this point newStudnt should have all the correct values, but I cant figure out how to properly add it to the arraylist. I commented out the array lists on line 24 along with the adding function I was trying to get work below, but I'm making a mistake somewhere
+            
+            /*
+            msStudList.add(newStudent); //adding new stud to correct list
+
+            for (int i = 0; i < msStudList.size(); i++)
+            {
+              MsStudent testStud = msStudList.get(i);
+
+              System.out.println("Name: " + testStud.getName() + "\nID: " + testStud.getID());
+            }
+            */
+          }
+          else if (tempType.equals("UNDERGRAD")) //UGRAD ADD SECTION///////////////////////////////////
+          {
+            System.out.print("Enter Student Name: ");
+            tempName = stringScan.nextLine();
+            System.out.print("\n\n");
+
+            System.out.print("Enter Courses Separated by Comma (Ex. abc1234,def5678): ");
+            tempCourses = stringScan.nextLine().toUpperCase();
+            System.out.print("\n\n");
+            String[] tempCourseList = tempCourses.split(","); //seperate courses into array
+
+            for (String test : tempCourseList) //verify that all input courses are valid
+            {
+              Course testCourse = courseList.getCourse(test);
+              //System.out.println(test); // <- prints the string getting passed to getCourse()
+
+              if (testCourse == null)
+              {
+                System.out.println("One or more courses were not valid");
                 break;
-            case 'D':
-                System.out.println("Print list of students\n");
-                break;
-            case 'X':
-               System.out.println("Back to main menu");
-               break;
-            default:
-                System.out.println("Invalid choice. Please try again.\n");
-              }		
-          } while (studentChoice != 'X');	
-    }
+              }
+            }
+
+            Student newStudent = new UndergraduateStudent(tempName, tempID, tempCourseList);
+            //refer to comment on line 206
+          }
+          else
+          {
+            System.out.println("Invalid Student Type\n");
+            break;
+          }
+          
+          break;
+          
+        case 'B': ////////////////////////////////DELETE FUNCTION////////////////////////////////////////////
+          
+          System.out.print("Enter Student’s ID: ");
+          tempID = stringScan.nextLine().toUpperCase(); //toUpper to make search easier
+
+          if (checkID(tempID) == true) //checks if id is in correct format
+          {
+            System.out.println("VALID ID (see comment)\n");
+            //when storage of all students is figured out, deletion will go here using tempID
+          }
+          else
+          { 
+            try
+            {
+              throw new IdException();
+            }
+            catch (IdException e)
+            {
+              System.out.println(e.excMsg());
+            }
+
+            break;
+          }
+          
+          break;
+          
+        case 'C': ////////////////////////////////INVOICE FUNCTION////////////////////////////////////////////
+          
+          System.out.print("Enter Student’s ID: ");
+          tempID = stringScan.nextLine().toUpperCase(); //toUpper to make search easier
+
+          if (checkID(tempID) == true) //checks if id is in correct format
+          {
+            System.out.println("VALID ID (see comment)\n");
+            //when storage of all students is figured out, search for correct Student object will go here using tempID
+          }
+          else
+          { 
+            try
+            {
+              throw new IdException();
+            }
+            catch (IdException e)
+            {
+              System.out.println(e.excMsg());
+            }
+
+            break;
+          }
+          
+          break;
+          
+        case 'D': ////////////////////////////////PRINT ALL FUNCTION////////////////////////////////////////////
+          System.out.println("All students will be printed here\n");
+          break;
+          
+        case 'X':
+          System.out.println("Back to main menu\n");
+          break;
+          
+        default:
+          System.out.println("Invalid choice. Please try again.\n");
+      }		
+    } 
+    while (studentChoice != 'X');	
   }
 
   //fills courselist with courses from inputed file
@@ -167,45 +376,101 @@ public class Driver {
     return fileScanner;
 
   }
-  
+
   //prints to file all courses and labs not including the disabled ones
   public static void closeFile(File lect, CourseList courseList) {
-	  PrintWriter writer = null;
-	  try {
-		  writer = new PrintWriter(lect);
-		  ArrayList <Course> list = courseList.getList();
-		  for(Course course : list) {
-			  if(course.getEnabled()) {
-				  if((course.getModality()).compareToIgnoreCase("online") == 0) { //check if its an online class as it doesnt have to print if it has labs or its location
-					  writer.printf("%d,%s,%s,%s,%s,%d\n", course.getCrn(), course.getPrefix() , course.getTitle(), course.getClassLevel(), course.getModality(), course.getCreditHours());
-				  }
-				  else {//if its not online it has to print out all of its fields
-					  writer.printf("%d,%s,%s,%s,%s,%s,%s,%d\n", course.getCrn(), course.getPrefix() , course.getTitle(), course.getClassLevel(), course.getModality(), course.getLocation(), course.getHasLab(), course.getCreditHours());
-				  }
-				  if(course.hasLabs()) { //checks if course has labs and if it does it gets labs
-					  ArrayList <Lab> labList = course.getLabList();
-					  for(Lab lab : labList) {//prints all labs to file that are enabled
-						  if(lab.getEnabled()) {
-							  writer.printf("%d,%s\n", lab.getCrn(), lab.getLocation());
-						  }
-					  }
-				  }
-			  }
-		  }
-	  }
-	  catch(Exception e) {
-		  System.out.println("File could not be closed");
-		  System.exit(0);
-	  
-	  }
-	  finally {
-		  if(writer != null) {
-			  writer.close();
-		  }
-	  }
+    PrintWriter writer = null;
+    try {
+      writer = new PrintWriter(lect);
+      ArrayList <Course> list = courseList.getList();
+      for(Course course : list) {
+        if(course.getEnabled()) {
+          if((course.getModality()).compareToIgnoreCase("online") == 0) { //check if its an online class as it doesnt have to print if it has labs or its location
+            writer.printf("%d,%s,%s,%s,%s,%d\n", course.getCrn(), course.getPrefix() , course.getTitle(), course.getClassLevel(), course.getModality(), course.getCreditHours());
+          }
+          else {//if its not online it has to print out all of its fields
+            writer.printf("%d,%s,%s,%s,%s,%s,%s,%d\n", course.getCrn(), course.getPrefix() , course.getTitle(), course.getClassLevel(), course.getModality(), course.getLocation(), course.getHasLab(), course.getCreditHours());
+          }
+          if(course.hasLabs()) { //checks if course has labs and if it does it gets labs
+            ArrayList <Lab> labList = course.getLabList();
+            for(Lab lab : labList) {//prints all labs to file that are enabled
+              if(lab.getEnabled()) {
+                writer.printf("%d,%s\n", lab.getCrn(), lab.getLocation());
+              }
+            }
+          }
+        }
+      }
+    }
+    catch(Exception e) {
+      System.out.println("File could not be closed");
+      System.exit(0);
+
+    }
+    finally {
+      if(writer != null) {
+        writer.close();
+      }
+    }
 
   }
+
+  //student management menu methods, if needs to be moved elsewhere lmk ////////////////
+
+  public static boolean checkID(String id) //returns true if id is valid, false if not
+  {
+    if(id.length() != 6) 
+    {
+      return false;
+    }
+
+    if(Character.isLetter(id.charAt(0)) == false || Character.isLetter(id.charAt(1)) == false)
+    {
+      return false;
+    }
+
+    if(Character.isDigit(id.charAt(2)) == false || Character.isDigit(id.charAt(3)) == false  || Character.isDigit(id.charAt(4)) == false || Character.isDigit(id.charAt(5)) == false)
+    {
+      return false;
+    }
+
+    //NEEDS TO CHECK ALL EXISTING IDS FOR DUPLICATES BEFORE RETURNING TRUE!!!!!!!!!!!!!!
+
+    return true;
+  }
+
+  /*
+  public static boolean checkCourses(String courses) //returns true if courses are valid, false if not
+  {
+    String[] checkCourseList = courses.split(",");
+    
+    for(String tempCourse : checkCourseList) 
+    {
+      if(tempCourse.length() != 7) 
+      {
+        return false;
+      }
+
+      if(getCourse(tempCourse) == null)
+      {
+        return false;
+      }
+      else
+      {
+        System.out.println(tempCourse + "COURSE WAS FOUND");
+      }
+
+      //if 
+    
+      
+      
+    }
+
+    return true;
+  }
+  */
 }
+//END OF DRIVER CLASS HERE//////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -216,16 +481,16 @@ class CourseList{
   public CourseList() {
     list = new ArrayList <Course>();
   }
-  
+
   public ArrayList <Course> getList() {
-	  return list;
+    return list;
   }
 
   public void addCourse(Course course) {
     list.add(course);
   }
 
-  
+
 
   //search for a lab or course through there crn and prints it
   public void searchList(int crn){
@@ -233,7 +498,7 @@ class CourseList{
       //if crn matches and course is enabled course is printed out
       if((course.getCrn() == crn) && (course.getEnabled() == true)) {
 
-    	System.out.printf("[ %d,%s,%s ]\n\n", course.getCrn(), course.getPrefix(), course.getTitle());
+      System.out.printf("[ %d,%s,%s ]\n\n", course.getCrn(), course.getPrefix(), course.getTitle());
         return;
       }
       //goes through any labs under that course and if they match crn and its enabled, it prints out the course the lab is for and then the lab
@@ -300,42 +565,42 @@ class CourseList{
     }
     System.out.printf("Class could not be found: invalid crn\n\n");
   }
-  
+
   //gets course if its exists otherwise returns null
   public Course getCourse(int crn) {
-	  int len = list.size();
-	  for(int i = 0; i < len; i++) {
-		  if(list.get(i).getCrn() == crn) {
-			  return list.get(i);
-		  }
-	  }
-	  return null; //returns null as crn wasn't found
-	 
+    int len = list.size();
+    for(int i = 0; i < len; i++) {
+      if(list.get(i).getCrn() == crn) {
+        return list.get(i);
+      }
+    }
+    return null; //returns null as crn wasn't found
+
   }
-  
+
   //gets course if its exists otherwise returns null
   public Course getCourse(String preFix) {
-	  int len = list.size();
-	  for(int i = 0; i < len; i++) {
-		  if((list.get(i).getPrefix()).compareToIgnoreCase(preFix) == 0) {
-			  return list.get(i);
-		  }
-	  }
-	  return null; //returns null as prefix wasn't found
-	 
+    int len = list.size();
+    for(int i = 0; i < len; i++) {
+      if((list.get(i).getPrefix()).compareToIgnoreCase(preFix) == 0) {
+        return list.get(i);
+      }
+    }
+    return null; //returns null as prefix wasn't found
+
   }
-  	//gets lab if its valid otherwise returns null
-	public Lab getLab(int crn) {
-		for(Course course : list) {
-			if(course.hasLabs()) {
-				Lab lab = course.getSpecificLab(crn); //if there is lab with matching crn it is returned otherwise its null
-				if(lab != null) {
-					return lab; // returns found lab
-				}	
-			}
-		}
-		return null; //couldnt find a lab with crn
-	}
+    //gets lab if its valid otherwise returns null
+  public Lab getLab(int crn) {
+    for(Course course : list) {
+      if(course.hasLabs()) {
+        Lab lab = course.getSpecificLab(crn); //if there is lab with matching crn it is returned otherwise its null
+        if(lab != null) {
+          return lab; // returns found lab
+        }	
+      }
+    }
+    return null; //couldnt find a lab with crn
+  }
 }
 
 
@@ -532,15 +797,15 @@ class Course {
   public int getCreditHours() {
     return creditHours;
   }
-  
+
   public ArrayList <Lab> getLabList() {
-	  return labList;
+    return labList;
   }
 
   public String getHasLab() {
-	  return hasLab;
+    return hasLab;
   }
-  
+
 }
 
 class Lab {
@@ -600,9 +865,9 @@ class Lab {
 abstract class Student
 {
   private String name;
-  private int id;
+  private String id;
 
-  public Student (String name, int id)
+  public Student (String name, String id)
   {
     this.name = name;
     this.id = id;
@@ -610,13 +875,13 @@ abstract class Student
 
   //overwritten in subclasses
   abstract public void printInvoice();
-  
+
   //getters (might be unneccessary?)
   public String getName()
   {
     return this.name;
   }
-  public int getId()
+  public String getId()
   {
     return this.id;
   }
@@ -626,12 +891,12 @@ class UndergraduateStudent extends Student
 {
   private String[] courses; //string array might be better since multiple courses?
 
-  public UndergraduateStudent (String name, int id, String[] courses)
+  public UndergraduateStudent (String name, String id, String[] courses)
   {
     super (name, id);
     this.courses = courses;
   }
-  
+
   public void printInvoice()
   {
     System.out.println("UGRAD INVOICE WILL PRINT HERE");
@@ -640,7 +905,7 @@ class UndergraduateStudent extends Student
 
 abstract class GraduateStudent extends Student
 {
-  public GraduateStudent(String name, int id)
+  public GraduateStudent(String name, String id)
   {
     super(name, id);
   }
@@ -649,13 +914,13 @@ abstract class GraduateStudent extends Student
 class MsStudent extends GraduateStudent
 {
   private String[] courses; //string array might be better since multiple courses?
-  
-  public MsStudent(String name, int id, String[] courses)
+
+  public MsStudent(String name, String id, String[] courses)
   {
     super (name, id);
     this.courses = courses;
   }
-  
+
   public void printInvoice()
   {
     System.out.println("MS INVOICE WILL PRINT HERE");
@@ -666,9 +931,9 @@ class PhdStudent extends GraduateStudent
 {
   private String advisor;
   private String subject;
-  private int[] labCrns; //int array since phd can supervise multiple labs, not sure if String or normal int would be better?
+  private ArrayList<Integer> labCrns; //changed from int array to arraylist 
 
-  public PhdStudent(String name, int id, String advisor, String subject, int[] labCrns)
+  public PhdStudent(String name, String id, String advisor, String subject, ArrayList<Integer> labCrns)
   {
     super(name, id);
     this.advisor = advisor;
@@ -689,7 +954,7 @@ class IdException extends Exception implements Serializable
   private static final long serialVersionUID = 1L;
   public String excMsg()
   {
-    return "Invalid ID format. Must be 'xx0000'";
+    return "\nInvalid ID format or ID already exists";
     //to be thrown in a try block after checking that an ID is wrong format or is a duplicate
   }
 }
