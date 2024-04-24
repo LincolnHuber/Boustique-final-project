@@ -17,9 +17,10 @@ public class Driver {
     CourseList courseList = new CourseList();
     //System.out.printf("File accpeted\n");
     fillCourseList(lect,  courseList);
+ 
     courseList.printList();
 
-    System.out.println(courseList.getLab(30008));
+    
 
     /*
     //all students will be stored here in case other parts of the program need to access, if there is an issue with them being in main pls lmk
@@ -37,7 +38,7 @@ public class Driver {
                     StudentManagementMenu(courseList);
                       break;
                   case 2:
-                    CourseManagementMenu();
+                    CourseManagementMenu(courseList);
                       break;
                   case 0:
                       System.out.println("Exiting...");
@@ -46,16 +47,15 @@ public class Driver {
                       System.out.println("Invalid choice. Please try again.");
               }
           } while (choice != 0);
-    //courseList.deleteCourse(51180);
-    //courseList.searchList(51180);
-    //courseList.searchList(32658);
-    courseList.deleteCourse(12658);
+    
     closeFile(lect, courseList);
   }
 
-  public static void CourseManagementMenu()
+  public static void CourseManagementMenu(CourseList list)
   {
     char courseChoice;
+    	int crn = 0;
+    	String location = null;
         Scanner courseScanner = new Scanner(System.in);
         do {
           System.out.println("\nCourse Management Menu\n\nChoose one of:\n\n  A - Search for a class or lab using the class/lab number\n  B - delete a class\n  C - Add a lab to a class\n  X - Back to main menu ");
@@ -63,14 +63,33 @@ public class Driver {
             //convert to uppercase directly after input
             courseChoice = courseScanner.next().toUpperCase().charAt(0);
             switch (courseChoice) { //char switch statement, doesnt crash when inputting integers
-            case 'A':
+            case 'A'://searchs for a course or lab
               System.out.print("Class/lab search function \n");
+              System.out.print("Enter crn: ");
+              crn = Integer.parseInt(courseScanner.next());
+              list.searchList(crn);
                 break;
-            case 'B':
+            case 'B'://deletes a course
               System.out.print("Delete Function \n");
+              System.out.print("Enter crn: ");
+              crn = Integer.parseInt(courseScanner.next());
+              list.deleteCourse(crn);
                 break;
-            case 'C':
-                System.out.println("Lab add\n");
+            case 'C'://adds a lab to a course
+              System.out.println("Lab add\n");
+              System.out.print("Enter crn for course you want to add lab to: ");
+              crn = Integer.parseInt(courseScanner.next());
+              Course tmpCourse = list.getCourse(crn);
+              if(tmpCourse != null) { //A valid crn was inputed
+            	  System.out.print("Enter lab's crn: ");
+            	  crn = Integer.parseInt(courseScanner.next());
+            	  System.out.print("Enter lab's location: ");
+            	  location = courseScanner.next();
+            	  tmpCourse.addLab(new Lab(crn, location));
+              }
+              else {//course could not be found for inputed crn
+            	  System.out.println("Course could not be found: invalid crn\n");
+              }
                 break;
             case 'X':
                System.out.println("Back to main menu");
@@ -533,14 +552,14 @@ class CourseList{
         //disables course if it doesnt have labs
         if(!course.hasLabs()) {
           course.setEnabled(false);
-          System.out.printf("[ %d,%s,%s ] deleted!\n\n",course.getCrn(), course.getPrefix(), course.getTitle());
+          System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
           return;
         }
         //disables course if it has labs and there all empty
         if(course.allLabsEmpty()) {
           course.setEnabled(false);
           course.allLabsSetEnabled(false);
-          System.out.printf("[ %d,%s,%s ] deleted!\n\n",course.getCrn(), course.getPrefix(), course.getTitle());
+          System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
           return;
         }
         System.out.println("course or its labs are not empty so it cant be deleted");
@@ -563,14 +582,14 @@ class CourseList{
         }
       }
     }
-    System.out.printf("Class could not be found: invalid crn\n\n");
+    System.out.printf("Course could not be found: invalid crn\n");
   }
 
   //gets course if its exists otherwise returns null
   public Course getCourse(int crn) {
     int len = list.size();
     for(int i = 0; i < len; i++) {
-      if(list.get(i).getCrn() == crn) {
+      if((list.get(i).getCrn() == crn) && (list.get(i).getEnabled())) {
         return list.get(i);
       }
     }
@@ -582,7 +601,7 @@ class CourseList{
   public Course getCourse(String preFix) {
     int len = list.size();
     for(int i = 0; i < len; i++) {
-      if((list.get(i).getPrefix()).compareToIgnoreCase(preFix) == 0) {
+      if(((list.get(i).getPrefix()).compareToIgnoreCase(preFix) == 0) && (list.get(i).getEnabled())) {
         return list.get(i);
       }
     }
@@ -712,7 +731,9 @@ class Course {
       return;
     }
     else {
-      System.out.println("hasLab is set to no for this course");
+      hasLab = "YES";
+      labList = new ArrayList <Lab>();
+      labList.add(lab);
       return;
     }
   }
