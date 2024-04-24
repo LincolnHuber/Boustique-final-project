@@ -22,12 +22,10 @@ public class Driver {
 
     
 
-    /*
+   
     //all students will be stored here in case other parts of the program need to access, if there is an issue with them being in main pls lmk
-    ArrayList<Student> ugradStudList = new ArrayList<Student>();
-    ArrayList<Student> msStudList = new ArrayList<Student>();
-    ArrayList<Student> phdStudList = new ArrayList<Student>();
-    */
+    ArrayList<Student> studentList = new ArrayList<Student>();
+  
      int choice;
           do {
               System.out.println("Main Menu\n1 : Student Management\n2 : Course Management\n0 : Exit");
@@ -35,7 +33,7 @@ public class Driver {
               choice = scanner.nextInt();
               switch (choice) {
                   case 1:
-                    StudentManagementMenu(courseList);
+                    StudentManagementMenu(courseList, studentList);
                       break;
                   case 2:
                     CourseManagementMenu(courseList);
@@ -101,7 +99,7 @@ public class Driver {
 
     }
 
-  public static void StudentManagementMenu(CourseList courseList)
+  public static void StudentManagementMenu(CourseList courseList, ArrayList<Student> studentList)
   {
     char studentChoice;
     String tempID;
@@ -171,29 +169,28 @@ public class Driver {
             System.out.print("Enter Supervised Lab Courses Separated by Comma (Ex. 12345,67890): ");
             tempCourses = stringScan.nextLine();
             System.out.print("\n\n");
-            String[] tempCourseList = tempCourses.split(","); //seperate courses into array
+            String[] tempCourseList = tempCourses.split(","); //seperate labs into array
 
-            ArrayList<Integer> tempCrnList  = new ArrayList<Integer>();
+            ArrayList<Integer> tempLabList  = new ArrayList<Integer>();
 
             for(String test : tempCourseList) //converts string array to int array
             {
-              tempCrnList.add(Integer.parseInt(test));
+              tempLabList.add(Integer.parseInt(test));
             }
 
-            for (int test : tempCrnList) //verify that all input courses are valid
+            for (int test : tempLabList) //verify that all input labs are valid
             {
-              Course testCourse = courseList.getCourse(test);
+              Lab testLab = courseList.getLab(test);
               //System.out.println(test); // <- prints the int getting passed to getCourse()
-
-              if (testCourse == null)
+              if (testLab == null)
               {
-                System.out.println("One or more courses were not valid");
+                System.out.println("One or more labs were not valid");
                 break;
               }
             }
 
-            Student newStudent = new PhdStudent(tempName, tempID, tempAdvisor, tempSubject, tempCrnList);
-            //refer to comment on line 206
+            Student newStudent = new PhdStudent(tempName, tempID, tempAdvisor, tempSubject, tempLabList);
+            studentList.add(newStudent);
           }
           else if (tempType.equals("MS")) //MS ADD SECTION///////////////////////////////////
           {
@@ -216,6 +213,7 @@ public class Driver {
                 System.out.println("One or more courses were not valid");
                 break;
               }
+              System.out.print(testCourse);
             }
 
 
@@ -224,16 +222,9 @@ public class Driver {
 
             //based on my testing, at this point newStudnt should have all the correct values, but I cant figure out how to properly add it to the arraylist. I commented out the array lists on line 24 along with the adding function I was trying to get work below, but I'm making a mistake somewhere
             
-            /*
-            msStudList.add(newStudent); //adding new stud to correct list
-
-            for (int i = 0; i < msStudList.size(); i++)
-            {
-              MsStudent testStud = msStudList.get(i);
-
-              System.out.println("Name: " + testStud.getName() + "\nID: " + testStud.getID());
-            }
-            */
+           
+            studentList.add(newStudent); //adding new stud to correct list
+            
           }
           else if (tempType.equals("UNDERGRAD")) //UGRAD ADD SECTION///////////////////////////////////
           {
@@ -259,7 +250,7 @@ public class Driver {
             }
 
             Student newStudent = new UndergraduateStudent(tempName, tempID, tempCourseList);
-            //refer to comment on line 206
+            studentList.add(newStudent);
           }
           else
           {
@@ -323,6 +314,43 @@ public class Driver {
           
         case 'D': ////////////////////////////////PRINT ALL FUNCTION////////////////////////////////////////////
           System.out.println("All students will be printed here\n");
+          ArrayList <Student> undergradStudents= new ArrayList <>();
+    	  ArrayList <Student> msStudents= new ArrayList <>();
+    	  ArrayList <Student> phdStudents= new ArrayList <>();
+          
+          for(Student student : studentList) {
+        	  
+        	  if(student instanceof UndergraduateStudent) {
+        		  undergradStudents.add(student);
+        	  }
+        	  else if(student instanceof MsStudent) {
+        		  msStudents.add(student);
+        	  }
+        	  else if(student instanceof PhdStudent){
+        		  phdStudents.add(student);
+        	  }
+        	  
+          }
+          System.out.println("PhD Students");
+    	  System.out.println("------------");
+    	  for(Student student: phdStudents) {
+    		  System.out.println("	- " + student.getName());
+    	  }
+    	  System.out.println("");
+    	  
+    	  System.out.println("MS Students");
+    	  System.out.println("------------");
+    	  for(Student student: msStudents) {
+    		  System.out.println("	- " + student.getName());
+    	  }
+    	  System.out.println("");
+          
+    	  System.out.println("Undergraduate Students");
+    	  System.out.println("------------");
+    	  for(Student student: undergradStudents) {
+    		  System.out.println("	- " + student.getName());
+    	  }
+    	  System.out.println("");
           break;
           
         case 'X':
