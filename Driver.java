@@ -948,7 +948,19 @@ class UndergraduateStudent extends Student
 
   public void printInvoice()
   {
-    System.out.println("UGRAD INVOICE WILL PRINT HERE");
+    double totalCost = 0;
+    System.out.println("VALENCE COLLEGE");
+    System.out.println("ORLANDO FL 10101");
+    System.out.println("--------------------------\n");
+    System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
+    System.out.println("1 Credit Hours = $120.25\n");
+    System.out.println("CRN" + crn);
+    System.out.println("CR_ PREFIX        CR_HOURS");
+    System.out.println("Health & id frees $ 35.00\n");
+    System.out.println("--------------------------\n");
+    System.out.println("$ " + totalCost);
+    System.out.println("-$ " + (totalCost * 0.25));
+    System.out.println("TOTAL PAYMENTS    $ " + (totalCost - (totalCost*0.25)));
   }
 }
 
@@ -972,7 +984,19 @@ class MsStudent extends GraduateStudent
 
   public void printInvoice()
   {
-    System.out.println("MS INVOICE WILL PRINT HERE");
+    double totalCost = 0;
+    System.out.println("VALENCE COLLEGE");
+    System.out.println("ORLANDO FL 10101");
+    System.out.println("--------------------------\n");
+    System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
+    System.out.println("1 Credit Hours = $120.25\n");
+    System.out.println("CRN" + crn);
+    System.out.println("CR_ PREFIX        CR_HOURS");
+    System.out.println("Health & id frees $ 35.00\n");
+    System.out.println("--------------------------\n");
+    System.out.println("$ " + totalCost);
+    System.out.println("-$ " + (totalCost * 0.25));
+    System.out.println("TOTAL PAYMENTS    $ " + (totalCost - (totalCost*0.25)));
   }
 }
 
@@ -992,7 +1016,20 @@ class PhdStudent extends GraduateStudent
 
   public void printInvoice()
   {
-    System.out.println("PHD INVOICE WILL PRINT HERE");
+    double totalCost = 0;
+    System.out.println("VALENCE COLLEGE");
+    System.out.println("ORLANDO FL 10101");
+    System.out.println("--------------------------\n");
+    System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
+    System.out.println("1 Credit Hours = $120.25\n");
+    System.out.println("CRN" + crn);
+    System.out.println("CR_ PREFIX        CR_HOURS");
+    System.out.println("Health & id frees $ 35.00\n");
+    System.out.println("--------------------------\n");
+    System.out.println("$ " + totalCost);
+    System.out.println("-$ " + (totalCost * 0.25));
+    System.out.println("TOTAL PAYMENTS    $ " + (totalCost - (totalCost*0.25)));
+   
   }
 }
 
