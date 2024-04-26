@@ -954,7 +954,7 @@ class UndergraduateStudent extends Student
     System.out.println("--------------------------\n");
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
     System.out.println("1 Credit Hours = $120.25\n");
-    System.out.println("CRN" + crn);
+    System.out.println("CRN" + crn); //needs logic for multiple courses
     System.out.println("CR_ PREFIX        CR_HOURS");
     System.out.println("Health & id frees $ 35.00\n");
     System.out.println("--------------------------\n");
@@ -985,18 +985,16 @@ class MsStudent extends GraduateStudent
   public void printInvoice()
   {
     double totalCost = 0;
+    totalCost += 35; //adds health and id fees
     System.out.println("VALENCE COLLEGE");
     System.out.println("ORLANDO FL 10101");
     System.out.println("--------------------------\n");
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
     System.out.println("1 Credit Hours = $300.00\n");
-    System.out.println("CRN" + crn);
-    System.out.println("CR_ PREFIX        CR_HOURS");
-    System.out.println("Health & id frees $ 35.00\n");
+    System.out.println("CRN        CR_ PREFIX    CR_HOURS");
+    System.out.println("\tHealth & id frees $ 35.00\n");
     System.out.println("--------------------------\n");
-    System.out.println("$ " + totalCost);
-    System.out.println("-$ " + (totalCost * 0.25));
-    System.out.println("TOTAL PAYMENTS    $ " + (totalCost - (totalCost*0.25)));
+    System.out.println("TOTAL PAYMENTS    $ " + totalCost);
   }
 }
 
@@ -1017,16 +1015,34 @@ class PhdStudent extends GraduateStudent
   public void printInvoice()
   {
     double totalCost = 0;
+    totalCost += 735; //adds research fee and health fee
+    int numEntries = labCrns.size(); //gets amount of labs the phd student supervises
+    if (numEntries >= 3) //logic for lab supervision discounts
+    {
+    	totalCost = 35; //sets cost equal to only the health and id fees
+    }
+    else if (numEntries == 2)
+    {
+    	totalCost = totalCost * .5;
+    }
     System.out.println("VALENCE COLLEGE");
     System.out.println("ORLANDO FL 10101");
     System.out.println("--------------------------\n");
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
-    System.out.println("RESEARCH");
-    System.out.println("Health & id frees $ 35.00\n");
+    System.out.println("1 Credit Hours = $120.25\n");
+    System.out.println("\n\nRESEARCH\n");
+    if(numEntries >= 3) //prints minus 700 if the PHD student supervises 3 or more labs
+    {
+    	System.out.println(this.subject + "t$ -700.00\n");
+    }
+    else
+    {
+    	System.out.println(this.subject + "t$ 700.00\n");
+    }
+    System.out.println("\tHealth & id frees $ 35.00\n\n");
     System.out.println("--------------------------\n");
-    System.out.println("$ " + totalCost);
-    System.out.println("-$ " + (totalCost * 0.25));
-    System.out.println("TOTAL PAYMENTS    $ " + (totalCost - (totalCost*0.25)));
+    //logic to remove costs based on entries in array list
+    System.out.println("TOTAL PAYMENTS    $ " + (totalCost));
    
   }
 }
