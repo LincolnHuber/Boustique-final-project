@@ -989,7 +989,7 @@ class MsStudent extends GraduateStudent
     System.out.println("ORLANDO FL 10101");
     System.out.println("--------------------------\n");
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
-    System.out.println("1 Credit Hours = $120.25\n");
+    System.out.println("1 Credit Hours = $300.00\n");
     System.out.println("CRN" + crn);
     System.out.println("CR_ PREFIX        CR_HOURS");
     System.out.println("Health & id frees $ 35.00\n");
@@ -1021,9 +1021,7 @@ class PhdStudent extends GraduateStudent
     System.out.println("ORLANDO FL 10101");
     System.out.println("--------------------------\n");
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
-    System.out.println("1 Credit Hours = $120.25\n");
-    System.out.println("CRN" + crn);
-    System.out.println("CR_ PREFIX        CR_HOURS");
+    System.out.println("RESEARCH");
     System.out.println("Health & id frees $ 35.00\n");
     System.out.println("--------------------------\n");
     System.out.println("$ " + totalCost);
