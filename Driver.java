@@ -187,7 +187,7 @@ public class Driver {
               if (testLab == null)
               {
                 System.out.println("One or more labs were not valid");
-                break;
+                return;
               }
             }
 
@@ -209,22 +209,21 @@ public class Driver {
             {
               Course testCourse = courseList.getCourse(test);
               //System.out.println(test); // <- prints the string getting passed to getCourse()
-
-              if (testCourse == null)
+              
+              if (testCourse == null || !(testCourse.isGraduate()))
               {
                 System.out.println("One or more courses were not valid");
-                break;
+                return;
               }
               System.out.print(testCourse);
             }
 
-
+	        //increments numPeopleTakingCourse field being stored in course
+	        for(String test : tempCourseList) {
+	        	courseList.getCourse(test).addPerson();
+	        }
             
             Student newStudent = new MsStudent(tempName, tempID, tempCourseList);
-
-            //based on my testing, at this point newStudnt should have all the correct values, but I cant figure out how to properly add it to the arraylist. I commented out the array lists on line 24 along with the adding function I was trying to get work below, but I'm making a mistake somewhere
-            
-           
             studentList.add(newStudent); //adding new stud to correct list
             
           }
@@ -245,11 +244,16 @@ public class Driver {
               Course testCourse = courseList.getCourse(test);
               //System.out.println(test); // <- prints the string getting passed to getCourse()
 
-              if (testCourse == null)
+              if (testCourse == null || !testCourse.isUndergraduate())
               {
                 System.out.println("One or more courses were not valid");
-                break;
+                return;
               }
+            }
+            
+            //increments numPeopleTakingCourse field being stored in course
+            for(String test : tempCourseList) {
+            	courseList.getCourse(test).addPerson();
             }
 
             Student newStudent = new UndergraduateStudent(tempName, tempID, tempCourseList, isResident);
@@ -579,7 +583,12 @@ class CourseList{
     //loops through all courses
     for(Course course : list) {
       //checks if an enabled course matches crn
-      if((course.getCrn() == crn) && (course.getEnabled() == true) && (course.Empty())) {
+      if((course.getCrn() == crn) && (course.getEnabled() == true)) {
+    	if(!course.Empty()) {
+    		System.out.println("Course is not empty so it cant be deleted");
+    	}
+    	  
+    	  
         //disables course if it doesnt have labs
         if(!course.hasLabs()) {
           course.setEnabled(false);
@@ -593,7 +602,7 @@ class CourseList{
           System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
           return;
         }
-        System.out.println("course or its labs are not empty so it cant be deleted");
+        System.out.println("Course or its labs are not empty so it cant be deleted");
       }
 
 
@@ -857,8 +866,27 @@ class Course {
   public String getHasLab() {
     return hasLab;
   }
-
+  public boolean isGraduate() {
+	  if(classLevel.compareToIgnoreCase("graduate") == 0) {
+		  return true;
+	  }
+	  else {
+		  return false;
+	  }
+  }
+  public boolean isUndergraduate() {
+	  if(classLevel.compareToIgnoreCase("undergraduate") == 0) {
+		  return true;
+	  }
+	  else {
+		  return false;
+	  }
+  }
+  public void addPerson() {
+	  numPeopleTakingCourse++;
+  }
 }
+  
 
 class Lab {
   private int crn;
