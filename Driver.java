@@ -108,10 +108,12 @@ public class Driver {
     String tempCourses;
     String tempAdvisor;
     String tempSubject;
+    int isResident = 0;
 
     Scanner charScan = new Scanner(System.in);
     Scanner stringScan = new Scanner(System.in); 
     Scanner intScan = new Scanner(System.in);
+    Scanner resScan = new Scanner(System.in); //scanner used for undergrads to store if they are a resident or not
     //ik these are technically not necessary but it makes it simpler to me, if needed to change back to just one scanner lmk - Chris
     
     do 
@@ -231,12 +233,13 @@ public class Driver {
             System.out.print("Enter Student Name: ");
             tempName = stringScan.nextLine();
             System.out.print("\n\n");
+            System.out.print("Is the student a resident? Enter 1 if yes or a 0 if no\n");
+            isResident = resScan.nextInt();
 
             System.out.print("Enter Courses Separated by Comma (Ex. abc1234,def5678): ");
             tempCourses = stringScan.nextLine().toUpperCase();
             System.out.print("\n\n");
             String[] tempCourseList = tempCourses.split(","); //seperate courses into array
-
             for (String test : tempCourseList) //verify that all input courses are valid
             {
               Course testCourse = courseList.getCourse(test);
@@ -249,7 +252,7 @@ public class Driver {
               }
             }
 
-            Student newStudent = new UndergraduateStudent(tempName, tempID, tempCourseList);
+            Student newStudent = new UndergraduateStudent(tempName, tempID, tempCourseList, isResident);
             studentList.add(newStudent);
           }
           else
@@ -939,13 +942,14 @@ abstract class Student
 class UndergraduateStudent extends Student
 {
   private String[] courses; //string array might be better since multiple courses?
-
-  public UndergraduateStudent (String name, String id, String[] courses)
+  int Resident; //0 means not resident, 1 means yes resident
+  public UndergraduateStudent (String name, String id, String[] courses, int isResident)
   {
     super (name, id);
     this.courses = courses;
+    Resident = isResident;
   }
-
+double creditHours = 120.25; //base resident credit hour
   public void printInvoice()
   {
     double totalCost = 0;
@@ -953,12 +957,21 @@ class UndergraduateStudent extends Student
     System.out.println("ORLANDO FL 10101");
     System.out.println("--------------------------\n");
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
-    System.out.println("1 Credit Hours = $120.25\n");
-    System.out.println("CRN" + crn); //needs logic for multiple courses
-    System.out.println("CR_ PREFIX        CR_HOURS");
+    if (Resident == 0)
+    {
+    	System.out.println("1 Credit Hours = $240.50\n");
+    	creditHours = 240.50;
+    }
+    else
+    {
+    	System.out.println("1 Credit Hours = $120.25\n");
+    }
+    System.out.println("CRN        CR_ PREFIX    CR_HOURS");
+    //add logic for each course here
     System.out.println("Health & id frees $ 35.00\n");
     System.out.println("--------------------------\n");
     System.out.println("$ " + totalCost);
+    //add logic for discount above 500$ payment
     System.out.println("-$ " + (totalCost * 0.25));
     System.out.println("TOTAL PAYMENTS    $ " + (totalCost - (totalCost*0.25)));
   }
@@ -992,6 +1005,7 @@ class MsStudent extends GraduateStudent
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
     System.out.println("1 Credit Hours = $300.00\n");
     System.out.println("CRN        CR_ PREFIX    CR_HOURS");
+    //add logic for each course here
     System.out.println("\tHealth & id frees $ 35.00\n");
     System.out.println("--------------------------\n");
     System.out.println("TOTAL PAYMENTS    $ " + totalCost);
