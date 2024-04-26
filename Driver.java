@@ -300,8 +300,17 @@ public class Driver {
 
           if (checkID(tempID) == true) //checks if id is in correct format
           {
-            System.out.println("VALID ID (see comment)\n");
-            //when storage of all students is figured out, search for correct Student object will go here using tempID
+        	  for(Student student : studentList) {//goes through all students to see if they have matching id 
+        		  if(student.getId().compareToIgnoreCase(tempID) == 0) {
+            		  student.printInvoice(); //calls print invoice and then ends 
+            		  return;
+            	  }
+              }
+              System.out.println("No Student has that ID");
+        	  
+        	  
+        	  
+  
           }
           else
           { 
@@ -316,7 +325,6 @@ public class Driver {
 
             break;
           }
-          
           break;
           
         case 'D': ////////////////////////////////PRINT ALL FUNCTION////////////////////////////////////////////
