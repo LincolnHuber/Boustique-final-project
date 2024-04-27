@@ -198,6 +198,7 @@ public class Driver {
 
             Student newStudent = new PhdStudent(tempName, tempID, tempAdvisor, tempSubject, tempLabList);
             studentList.add(newStudent);
+            System.out.println(tempName + " Added to students!");
           }
           else if (tempType.equals("MS")) //MS ADD SECTION///////////////////////////////////
           {
@@ -237,8 +238,9 @@ public class Driver {
 	        	courseList.getCourse(test).addPerson();
 	        }
             
-            Student newStudent = new MsStudent(tempName, tempID, crnList);
+            Student newStudent = new MsStudent(tempName, tempID, crnList, courseList);
             studentList.add(newStudent); //adding new stud to correct list
+            System.out.println(tempName + " Added to students!");
             
           }
           else if (tempType.equals("UNDERGRAD")) //UGRAD ADD SECTION///////////////////////////////////
@@ -1065,14 +1067,17 @@ abstract class GraduateStudent extends Student
 
 class MsStudent extends GraduateStudent
 {
-  private int[] courses; //string array might be better since multiple courses?
-
-  public MsStudent(String name, String id, int[] courses)
+  private String[] courses; //string array might be better since multiple courses?
+  private CourseList courseList; //courselist array reference
+  
+  public MsStudent(String name, String id, int[] courses, CourseList courseList)
   {
     super (name, id);
     this.courses = courses;
+    this.courseList = courseList;
   }
-
+  double courseCost; //stores cost for a course
+  double creditHours = 300.00;
   public void printInvoice()
   {
     double totalCost = 0;
@@ -1083,10 +1088,22 @@ class MsStudent extends GraduateStudent
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
     System.out.println("1 Credit Hours = $300.00\n");
     System.out.println("CRN        CR_ PREFIX    CR_HOURS");
-    //add logic for each course here
-    System.out.println("\tHealth & id fees $ 35.00\n");
+    for (String coursePrefix : courses) {
+        Course course = courseList.getCourse(coursePrefix);
+        courseCost = course.getCreditHours() * creditHours; //cost for the current course
+        if (course != null) 
+        {
+            //System.out.printf("%d      %s       %d           $ %.2lf\n", course.getCrn(), course.getPrefix(), course.getCreditHours(), courseCost);
+            System.out.printf("%d      ", course.getCrn());
+            System.out.printf("%s       ", course.getPrefix());
+            System.out.printf("%d           ", course.getCreditHours());
+            System.out.printf("$%.2f\n", courseCost);
+            totalCost += course.getCreditHours() * creditHours;
+        }
+    }
+    System.out.println("\n\t\tHealth & id fees     $ 35.00\n");
     System.out.println("--------------------------\n");
-    System.out.println("TOTAL PAYMENTS    $ " + totalCost);
+    System.out.println("\tTOTAL PAYMENTS    $ \n" + totalCost);
   }
   
   public int [] getCourses() {
@@ -1126,20 +1143,19 @@ class PhdStudent extends GraduateStudent
     System.out.println("ORLANDO FL 10101");
     System.out.println("--------------------------\n");
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
-    System.out.println("1 Credit Hours = $120.25\n");
-    System.out.println("\n\nRESEARCH\n");
+    System.out.println("\n\nRESEARCH");
     if(numEntries >= 3) //prints minus 700 if the PHD student supervises 3 or more labs
     {
-    	System.out.println(this.subject + "t$ -700.00\n");
+    	System.out.println(this.subject + "\t\t $ -700.00\n");
     }
     else
     {
-    	System.out.println(this.subject + "t$ 700.00\n");
+    	System.out.println(this.subject + "\t\t $ 700.00\n");
     }
-    System.out.println("\tHealth & id fees $ 35.00\n\n");
+    System.out.println("\tHealth & id fees $ 35.00\n");
     System.out.println("--------------------------\n");
     //logic to remove costs based on entries in array list
-    System.out.println("TOTAL PAYMENTS    $ " + (totalCost));
+    System.out.printf("TOTAL PAYMENTS    $ %.2f\n\n", totalCost);
    
   }
 }
