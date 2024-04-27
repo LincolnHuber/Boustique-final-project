@@ -79,11 +79,16 @@ public class Driver {
               crn = Integer.parseInt(courseScanner.next());
               Course tmpCourse = list.getCourse(crn);
               if(tmpCourse != null) { //A valid crn was inputed
-            	  System.out.print("Enter lab's crn: ");
-            	  crn = Integer.parseInt(courseScanner.next());
-            	  System.out.print("Enter lab's location: ");
-            	  location = courseScanner.next();
-            	  tmpCourse.addLab(new Lab(crn, location));
+            	  if(tmpCourse.hasLabs()) { // checks if the class can have labs added to it
+	            	  System.out.print("Enter lab's crn: ");
+	            	  crn = Integer.parseInt(courseScanner.next());
+	            	  System.out.print("Enter lab's location: ");
+	            	  location = courseScanner.next();
+	            	  tmpCourse.addLab(new Lab(crn, location));
+            	  }
+            	  else {
+            		  System.out.println("That class can not have any labs\n");
+            	  }
               }
               else {//course could not be found for inputed crn
             	  System.out.println("Course could not be found: invalid crn\n");
@@ -275,7 +280,35 @@ public class Driver {
           if (checkID(tempID) == true) //checks if id is in correct format
           {
             System.out.println("VALID ID (see comment)\n");
-            //when storage of all students is figured out, deletion will go here using tempID
+            int i = 0;
+            //iterates through student list to find one with matching id
+            for(Student student : studentList) { 
+            	if(student.getId().compareToIgnoreCase(tempID) == 0){
+            		if(student instanceof UndergraduateStudent) {// checks if student is undergrad student because if so all there courses must store that they aren't taking the class anymore
+            			String [] courses = ((UndergraduateStudent) student).getCourses();
+            			for(String crn : courses) {
+            				courseList.getCourse(crn).removePerson();
+            			}
+            		}
+            		else if(student instanceof MsStudent) {// checks if student is masters student because if so all there courses must store that they aren't taking the class anymore
+            			String [] courses = ((MsStudent) student).getCourses();
+            			for(String crn : courses) {
+            				courseList.getCourse(crn).removePerson();
+            			}
+            			
+            		}
+          
+	            	System.out.println("[ " + student.getName() + " ] deleted!");
+	            	studentList.remove(i);
+	            	break;
+            	}
+            	i++;
+            }
+            
+            
+            
+            
+            
           }
           else
           { 
@@ -595,22 +628,12 @@ class CourseList{
     	if(!course.Empty()) {
     		System.out.println("Course is not empty so it cant be deleted");
     	}
-    	  
-    	  
-        //disables course if it doesnt have labs
-        if(!course.hasLabs()) {
-          course.setEnabled(false);
-          System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
-          return;
-        }
-        //disables course if it has labs and there all empty
-        if(course.allLabsEmpty()) {
-          course.setEnabled(false);
-          course.allLabsSetEnabled(false);
-          System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
-          return;
-        }
-        System.out.println("Course or its labs are not empty so it cant be deleted");
+    	else {
+    		course.setEnabled(false);
+    		System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
+    	}
+        return;
+        
       }
 
 
@@ -778,12 +801,6 @@ class Course {
       labList.add(lab);
       return;
     }
-    else {
-      hasLab = "YES";
-      labList = new ArrayList <Lab>();
-      labList.add(lab);
-      return;
-    }
   }
 
   //returns true if no one is taking the course, otherwise false
@@ -893,6 +910,9 @@ class Course {
   public void addPerson() {
 	  numPeopleTakingCourse++;
   }
+  public void removePerson() {
+	  numPeopleTakingCourse--;
+  }
 }
   
 
@@ -978,14 +998,14 @@ abstract class Student
 class UndergraduateStudent extends Student
 {
   private String[] courses; //string array might be better since multiple courses?
-  int Resident; //0 means not resident, 1 means yes resident
+  private int Resident; //0 means not resident, 1 means yes resident
   public UndergraduateStudent (String name, String id, String[] courses, int isResident)
   {
     super (name, id);
     this.courses = courses;
     Resident = isResident;
   }
-double creditHours = 120.25; //base resident credit hour
+  private double creditHours = 120.25; //base resident credit hour
   public void printInvoice()
   {
     double totalCost = 0;
@@ -1010,6 +1030,10 @@ double creditHours = 120.25; //base resident credit hour
     //add logic for discount above 500$ payment
     System.out.println("-$ " + (totalCost * 0.25));
     System.out.println("TOTAL PAYMENTS    $ " + (totalCost - (totalCost*0.25)));
+  }
+  
+  public String[] getCourses(){
+	  return courses;
   }
 }
 
@@ -1045,6 +1069,9 @@ class MsStudent extends GraduateStudent
     System.out.println("\tHealth & id frees $ 35.00\n");
     System.out.println("--------------------------\n");
     System.out.println("TOTAL PAYMENTS    $ " + totalCost);
+  }
+  public String [] getCourses() {
+	  return courses;
   }
 }
 
