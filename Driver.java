@@ -1023,12 +1023,12 @@ class UndergraduateStudent extends Student
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
     if (Resident == 0)
     {
-    	System.out.println("1 Credit Hours = $240.50\n");
+    	System.out.println("\n1 Credit Hour = $240.50\n");
     	creditHours = 240.50;
     }
     else
     {
-    	System.out.println("1 Credit Hours = $120.25\n");
+    	System.out.println("\n1 Credit Hours = $120.25\n");
     }
     System.out.println("CRN        CR_ PREFIX    CR_HOURS");
     for (int crn : courses) {
@@ -1044,7 +1044,7 @@ class UndergraduateStudent extends Student
             totalCost += course.getCreditHours() * creditHours;
         }
     }
-    System.out.println("\n\t\tHealth & id fees $ 35.00\n");
+    System.out.println("\n\t\tHealth & id fees    $ 35.00\n");
     System.out.println("--------------------------\n");
     System.out.println("$ " + totalCost);
     //add logic for discount above 500$ payment
@@ -1086,7 +1086,7 @@ class MsStudent extends GraduateStudent
     System.out.println("ORLANDO FL 10101");
     System.out.println("--------------------------\n");
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
-    System.out.println("1 Credit Hours = $300.00\n");
+    System.out.println("\n1 Credit Hour = $300.00\n");
     System.out.println("CRN        CR_ PREFIX    CR_HOURS");
     for (int coursePrefix : courses) {
         Course course = courseList.getCourse(coursePrefix);
@@ -1096,14 +1096,14 @@ class MsStudent extends GraduateStudent
             //System.out.printf("%d      %s       %d           $ %.2lf\n", course.getCrn(), course.getPrefix(), course.getCreditHours(), courseCost);
             System.out.printf("%d      ", course.getCrn());
             System.out.printf("%s       ", course.getPrefix());
-            System.out.printf("%d           ", course.getCreditHours());
-            System.out.printf("$%.2f\n", courseCost);
+            System.out.printf("%d          ", course.getCreditHours());
+            System.out.printf("$ %.2f\n", courseCost);
             totalCost += course.getCreditHours() * creditHours;
         }
     }
     System.out.println("\n\t\tHealth & id fees     $ 35.00\n");
     System.out.println("--------------------------\n");
-    System.out.println("\tTOTAL PAYMENTS    $ \n" + totalCost);
+    System.out.println("\tTOTAL PAYMENTS    $ " + totalCost);
   }
   
   public int [] getCourses() {
@@ -1155,7 +1155,7 @@ class PhdStudent extends GraduateStudent
     System.out.println("\tHealth & id fees $ 35.00\n");
     System.out.println("--------------------------\n");
     //logic to remove costs based on entries in array list
-    System.out.printf("TOTAL PAYMENTS    $ %.2f\n\n", totalCost);
+    System.out.printf("\tTOTAL PAYMENTS    $ %.2f\n\n", totalCost);
    
   }
 }
