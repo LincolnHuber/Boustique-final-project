@@ -79,11 +79,16 @@ public class Driver {
               crn = Integer.parseInt(courseScanner.next());
               Course tmpCourse = list.getCourse(crn);
               if(tmpCourse != null) { //A valid crn was inputed
-            	  System.out.print("Enter lab's crn: ");
-            	  crn = Integer.parseInt(courseScanner.next());
-            	  System.out.print("Enter lab's location: ");
-            	  location = courseScanner.next();
-            	  tmpCourse.addLab(new Lab(crn, location));
+            	  if(tmpCourse.hasLabs()) { // checks if the class can have labs added to it
+	            	  System.out.print("Enter lab's crn: ");
+	            	  crn = Integer.parseInt(courseScanner.next());
+	            	  System.out.print("Enter lab's location: ");
+	            	  location = courseScanner.next();
+	            	  tmpCourse.addLab(new Lab(crn, location));
+            	  }
+            	  else {
+            		  System.out.println("That class can not have any labs\n");
+            	  }
               }
               else {//course could not be found for inputed crn
             	  System.out.println("Course could not be found: invalid crn\n");
@@ -276,7 +281,30 @@ public class Driver {
           if (checkID(tempID) == true) //checks if id is in correct format
           {
             System.out.println("VALID ID (see comment)\n");
-            //when storage of all students is figured out, deletion will go here using tempID
+            int i = 0;
+            //iterates through student list to find one with matching id
+            for(Student student : studentList) { 
+            	if(student.getId().compareToIgnoreCase(tempID) == 0){
+            		if(student instanceof UndergraduateStudent) {// checks if student is undergrad student because if so all there courses must store that they aren't taking the class anymore
+            			String [] courses = ((UndergraduateStudent) student).getCourses();
+            			for(String crn : courses) {
+            				courseList.getCourse(crn).removePerson();
+            			}
+            		}
+            		else if(student instanceof MsStudent) {// checks if student is masters student because if so all there courses must store that they aren't taking the class anymore
+            			String [] courses = ((MsStudent) student).getCourses();
+            			for(String crn : courses) {
+            				courseList.getCourse(crn).removePerson();
+            			}
+
+            		}
+
+	            	System.out.println("[ " + student.getName() + " ] deleted!");
+	            	studentList.remove(i);
+	            	break;
+            	}
+            	i++;
+            }
             System.out.println("Student Deleted\n");
           }
           else
@@ -895,6 +923,10 @@ class Course {
   public void addPerson() {
 	  numPeopleTakingCourse++;
   }
+  
+  public void removePerson() {
+	  numPeopleTakingCourse--;
+  }
 }
   
 
@@ -1027,6 +1059,11 @@ double courseCost; //stores cost for a course
     //add logic for discount above 500$ payment
     System.out.println("TOTAL PAYMENTS    $ " + (totalCost - (totalCost*0.25)));
   }
+  
+  public String [] getCourses() {
+	  return courses;
+  }
+  
 }
 
 abstract class GraduateStudent extends Student
@@ -1062,6 +1099,11 @@ class MsStudent extends GraduateStudent
     System.out.println("--------------------------\n");
     System.out.println("TOTAL PAYMENTS    $ " + totalCost);
   }
+  
+  public String [] getCourses() {
+	  return courses;
+  }
+  
 }
 
 class PhdStudent extends GraduateStudent
