@@ -1154,20 +1154,19 @@ class PhdStudent extends GraduateStudent
     System.out.println("ORLANDO FL 10101");
     System.out.println("--------------------------\n");
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
-    System.out.println("1 Credit Hours = $120.25\n");
-    System.out.println("\n\nRESEARCH\n");
+    System.out.println("\n\nRESEARCH");
     if(numEntries >= 3) //prints minus 700 if the PHD student supervises 3 or more labs
     {
-    	System.out.println(this.subject + "t$ -700.00\n");
+    	System.out.println(this.subject + "\t\t $ -700.00\n");
     }
     else
     {
-    	System.out.println(this.subject + "t$ 700.00\n");
+    	System.out.println(this.subject + "\t\t $ 700.00\n");
     }
-    System.out.println("\tHealth & id fees $ 35.00\n\n");
+    System.out.println("\tHealth & id fees $ 35.00\n");
     System.out.println("--------------------------\n");
     //logic to remove costs based on entries in array list
-    System.out.println("TOTAL PAYMENTS    $ " + (totalCost));
+    System.out.printf("TOTAL PAYMENTS    $ %.2f\n\n", totalCost);
    
   }
 }
