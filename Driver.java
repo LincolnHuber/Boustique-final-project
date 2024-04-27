@@ -1021,7 +1021,7 @@ double courseCost; //stores cost for a course
             totalCost += course.getCreditHours() * creditHours;
         }
     }
-    System.out.println("\n\t\tHealth & id frees $ 35.00\n");
+    System.out.println("\n\t\tHealth & id fees $ 35.00\n");
     System.out.println("--------------------------\n");
     System.out.println("$ " + totalCost);
     //add logic for discount above 500$ payment
@@ -1058,7 +1058,7 @@ class MsStudent extends GraduateStudent
     System.out.println("1 Credit Hours = $300.00\n");
     System.out.println("CRN        CR_ PREFIX    CR_HOURS");
     //add logic for each course here
-    System.out.println("\tHealth & id frees $ 35.00\n");
+    System.out.println("\tHealth & id fees $ 35.00\n");
     System.out.println("--------------------------\n");
     System.out.println("TOTAL PAYMENTS    $ " + totalCost);
   }
@@ -1105,7 +1105,7 @@ class PhdStudent extends GraduateStudent
     {
     	System.out.println(this.subject + "t$ 700.00\n");
     }
-    System.out.println("\tHealth & id frees $ 35.00\n\n");
+    System.out.println("\tHealth & id fees $ 35.00\n\n");
     System.out.println("--------------------------\n");
     //logic to remove costs based on entries in array list
     System.out.println("TOTAL PAYMENTS    $ " + (totalCost));
