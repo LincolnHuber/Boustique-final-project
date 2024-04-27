@@ -205,12 +205,21 @@ public class Driver {
             tempName = stringScan.nextLine();
             System.out.print("\n\n");
 
-            System.out.print("Enter Courses Separated by Comma (Ex. abc1234,def5678): ");
-            tempCourses = stringScan.nextLine().toUpperCase();
+            System.out.print("Enter Course Id's Separated by Comma (Ex. 89745,66636): ");
+            tempCourses = stringScan.nextLine();
             System.out.print("\n\n");
             String[] tempCourseList = tempCourses.split(","); //seperate courses into array
+            
+            //converts string array to int array
+            int [] crnList = new int[tempCourseList.length];
+            int i = 0;
+            for(String tempCrn : tempCourseList) {
+            	crnList[i] = Integer.parseInt(tempCrn);
+            	i++;
+            }
+   
 
-            for (String test : tempCourseList) //verify that all input courses are valid
+            for (int test : crnList) //verify that all input courses are valid
             {
               Course testCourse = courseList.getCourse(test);
               //System.out.println(test); // <- prints the string getting passed to getCourse()
@@ -224,11 +233,11 @@ public class Driver {
             }
 
 	        //increments numPeopleTakingCourse field being stored in course
-	        for(String test : tempCourseList) {
+	        for(int test : crnList) {
 	        	courseList.getCourse(test).addPerson();
 	        }
             
-            Student newStudent = new MsStudent(tempName, tempID, tempCourseList);
+            Student newStudent = new MsStudent(tempName, tempID, crnList);
             studentList.add(newStudent); //adding new stud to correct list
             
           }
@@ -240,11 +249,20 @@ public class Driver {
             System.out.print("Is the student a resident? Enter 1 if yes or a 0 if no\n");
             isResident = resScan.nextInt();
 
-            System.out.print("Enter Courses Separated by Comma (Ex. abc1234,def5678): ");
-            tempCourses = stringScan.nextLine().toUpperCase();
+            System.out.print("Enter Course Id's Separated by Comma (Ex. 89745,66636): ");
+            tempCourses = stringScan.nextLine();
             System.out.print("\n\n");
             String[] tempCourseList = tempCourses.split(","); //seperate courses into array
-            for (String test : tempCourseList) //verify that all input courses are valid
+            
+            //changes string array to int array
+            int [] crnList = new int[tempCourseList.length];
+            int i = 0;
+            for(String tempCrn : tempCourseList) {
+            	crnList[i] = Integer.parseInt(tempCrn);
+            	i++;
+            }
+            
+            for (int test : crnList) //verify that all input courses are valid
             {
               Course testCourse = courseList.getCourse(test);
               //System.out.println(test); // <- prints the string getting passed to getCourse()
@@ -257,11 +275,11 @@ public class Driver {
             }
             
             //increments numPeopleTakingCourse field being stored in course
-            for(String test : tempCourseList) {
+            for(int test : crnList) {
             	courseList.getCourse(test).addPerson();
             }
 
-            Student newStudent = new UndergraduateStudent(tempName, tempID, tempCourseList, isResident, courseList);
+            Student newStudent = new UndergraduateStudent(tempName, tempID, crnList, isResident, courseList);
             studentList.add(newStudent);
             System.out.println(tempName + " Added to students!");
           }
@@ -286,14 +304,14 @@ public class Driver {
             for(Student student : studentList) { 
             	if(student.getId().compareToIgnoreCase(tempID) == 0){
             		if(student instanceof UndergraduateStudent) {// checks if student is undergrad student because if so all there courses must store that they aren't taking the class anymore
-            			String [] courses = ((UndergraduateStudent) student).getCourses();
-            			for(String crn : courses) {
+            			int [] courses = ((UndergraduateStudent) student).getCourses();
+            			for(int crn : courses) {
             				courseList.getCourse(crn).removePerson();
             			}
             		}
             		else if(student instanceof MsStudent) {// checks if student is masters student because if so all there courses must store that they aren't taking the class anymore
-            			String [] courses = ((MsStudent) student).getCourses();
-            			for(String crn : courses) {
+            			int [] courses = ((MsStudent) student).getCourses();
+            			for(int crn : courses) {
             				courseList.getCourse(crn).removePerson();
             			}
 
@@ -305,7 +323,6 @@ public class Driver {
             	}
             	i++;
             }
-            System.out.println("Student Deleted\n");
           }
           else
           { 
@@ -621,45 +638,17 @@ class CourseList{
     //loops through all courses
     for(Course course : list) {
       //checks if an enabled course matches crn
-      if((course.getCrn() == crn) && (course.getEnabled() == true)) {
-    	if(!course.Empty()) {
-    		System.out.println("Course is not empty so it cant be deleted");
-    	}
-    	  
-    	  
-        //disables course if it doesnt have labs
-        if(!course.hasLabs()) {
-          course.setEnabled(false);
-          System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
-          return;
-        }
-        //disables course if it has labs and there all empty
-        if(course.allLabsEmpty()) {
-          course.setEnabled(false);
-          course.allLabsSetEnabled(false);
-          System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
-          return;
-        }
-        System.out.println("Course or its labs are not empty so it cant be deleted");
-      }
+	      if((course.getCrn() == crn) && (course.getEnabled() == true)) {
+	    	  if(!course.Empty()) {
+	    		 System.out.println("Course is not empty so it cant be deleted");
+	    		return;
+	    	  }
+		      course.setEnabled(false);
+		      System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
+		      return;
 
-
-      //checks all labs under a course and if one matches the crn and is empty it is disabled
-      if(course.hasLabs()) {
-        Lab tmpLab = course.getSpecificLab(crn);
-        if(tmpLab != null) {
-          if(tmpLab.empty()) {
-            tmpLab.setEnabled(false);
-            System.out.printf("Lab %d %s deleted!\n\n",tmpLab.getCrn(), tmpLab.getLocation() );
-            return;
-          }
-          else {
-            System.out.println("lab is not empty so it cant be deleted");
-            return;
-          }
-        }
-      }
-    }
+	      }
+     }
     System.out.printf("Course could not be found: invalid crn\n");
   }
 
@@ -1011,18 +1000,18 @@ abstract class Student
 
 class UndergraduateStudent extends Student
 {
-  private String[] courses; //string array might be better since multiple courses?
+  private int[] courses; //string array might be better since multiple courses?
   private CourseList courseList; //courselist array reference
   private int Resident; //0 means not resident, 1 means yes resident
-  public UndergraduateStudent (String name, String id, String[] courses, int isResident, CourseList courseList)
+  public UndergraduateStudent (String name, String id, int[] courses, int isResident, CourseList courseList)
   {
     super (name, id);
     this.courses = courses;
     Resident = isResident;
     this.courseList = courseList;
   }
-double creditHours = 120.25; //base resident credit hour
-double courseCost; //stores cost for a course
+  private double creditHours = 120.25; //base resident credit hour
+  private double courseCost; //stores cost for a course
   public void printInvoice()
   {
     double totalCost = 0;
@@ -1040,8 +1029,8 @@ double courseCost; //stores cost for a course
     	System.out.println("1 Credit Hours = $120.25\n");
     }
     System.out.println("CRN        CR_ PREFIX    CR_HOURS");
-    for (String coursePrefix : courses) {
-        Course course = courseList.getCourse(coursePrefix);
+    for (int crn : courses) {
+        Course course = courseList.getCourse(crn);
         courseCost = course.getCreditHours() * creditHours; //cost for the current course
         if (course != null) 
         {
@@ -1060,7 +1049,7 @@ double courseCost; //stores cost for a course
     System.out.println("TOTAL PAYMENTS    $ " + (totalCost - (totalCost*0.25)));
   }
   
-  public String [] getCourses() {
+  public int [] getCourses() {
 	  return courses;
   }
   
@@ -1076,9 +1065,9 @@ abstract class GraduateStudent extends Student
 
 class MsStudent extends GraduateStudent
 {
-  private String[] courses; //string array might be better since multiple courses?
+  private int[] courses; //string array might be better since multiple courses?
 
-  public MsStudent(String name, String id, String[] courses)
+  public MsStudent(String name, String id, int[] courses)
   {
     super (name, id);
     this.courses = courses;
@@ -1100,7 +1089,7 @@ class MsStudent extends GraduateStudent
     System.out.println("TOTAL PAYMENTS    $ " + totalCost);
   }
   
-  public String [] getCourses() {
+  public int [] getCourses() {
 	  return courses;
   }
   
