@@ -79,16 +79,11 @@ public class Driver {
               crn = Integer.parseInt(courseScanner.next());
               Course tmpCourse = list.getCourse(crn);
               if(tmpCourse != null) { //A valid crn was inputed
-            	  if(tmpCourse.hasLabs()) { // checks if the class can have labs added to it
-	            	  System.out.print("Enter lab's crn: ");
-	            	  crn = Integer.parseInt(courseScanner.next());
-	            	  System.out.print("Enter lab's location: ");
-	            	  location = courseScanner.next();
-	            	  tmpCourse.addLab(new Lab(crn, location));
-            	  }
-            	  else {
-            		  System.out.println("That class can not have any labs\n");
-            	  }
+            	  System.out.print("Enter lab's crn: ");
+            	  crn = Integer.parseInt(courseScanner.next());
+            	  System.out.print("Enter lab's location: ");
+            	  location = courseScanner.next();
+            	  tmpCourse.addLab(new Lab(crn, location));
               }
               else {//course could not be found for inputed crn
             	  System.out.println("Course could not be found: invalid crn\n");
@@ -261,8 +256,9 @@ public class Driver {
             	courseList.getCourse(test).addPerson();
             }
 
-            Student newStudent = new UndergraduateStudent(tempName, tempID, tempCourseList, isResident);
+            Student newStudent = new UndergraduateStudent(tempName, tempID, tempCourseList, isResident, courseList);
             studentList.add(newStudent);
+            System.out.println(tempName + " Added to students!");
           }
           else
           {
@@ -280,35 +276,8 @@ public class Driver {
           if (checkID(tempID) == true) //checks if id is in correct format
           {
             System.out.println("VALID ID (see comment)\n");
-            int i = 0;
-            //iterates through student list to find one with matching id
-            for(Student student : studentList) { 
-            	if(student.getId().compareToIgnoreCase(tempID) == 0){
-            		if(student instanceof UndergraduateStudent) {// checks if student is undergrad student because if so all there courses must store that they aren't taking the class anymore
-            			String [] courses = ((UndergraduateStudent) student).getCourses();
-            			for(String crn : courses) {
-            				courseList.getCourse(crn).removePerson();
-            			}
-            		}
-            		else if(student instanceof MsStudent) {// checks if student is masters student because if so all there courses must store that they aren't taking the class anymore
-            			String [] courses = ((MsStudent) student).getCourses();
-            			for(String crn : courses) {
-            				courseList.getCourse(crn).removePerson();
-            			}
-            			
-            		}
-          
-	            	System.out.println("[ " + student.getName() + " ] deleted!");
-	            	studentList.remove(i);
-	            	break;
-            	}
-            	i++;
-            }
-            
-            
-            
-            
-            
+            //when storage of all students is figured out, deletion will go here using tempID
+            System.out.println("Student Deleted\n");
           }
           else
           { 
@@ -628,12 +597,22 @@ class CourseList{
     	if(!course.Empty()) {
     		System.out.println("Course is not empty so it cant be deleted");
     	}
-    	else {
-    		course.setEnabled(false);
-    		System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
-    	}
-        return;
-        
+    	  
+    	  
+        //disables course if it doesnt have labs
+        if(!course.hasLabs()) {
+          course.setEnabled(false);
+          System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
+          return;
+        }
+        //disables course if it has labs and there all empty
+        if(course.allLabsEmpty()) {
+          course.setEnabled(false);
+          course.allLabsSetEnabled(false);
+          System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
+          return;
+        }
+        System.out.println("Course or its labs are not empty so it cant be deleted");
       }
 
 
@@ -801,6 +780,12 @@ class Course {
       labList.add(lab);
       return;
     }
+    else {
+      hasLab = "YES";
+      labList = new ArrayList <Lab>();
+      labList.add(lab);
+      return;
+    }
   }
 
   //returns true if no one is taking the course, otherwise false
@@ -910,9 +895,6 @@ class Course {
   public void addPerson() {
 	  numPeopleTakingCourse++;
   }
-  public void removePerson() {
-	  numPeopleTakingCourse--;
-  }
 }
   
 
@@ -998,14 +980,17 @@ abstract class Student
 class UndergraduateStudent extends Student
 {
   private String[] courses; //string array might be better since multiple courses?
+  private CourseList courseList; //courselist array reference
   private int Resident; //0 means not resident, 1 means yes resident
-  public UndergraduateStudent (String name, String id, String[] courses, int isResident)
+  public UndergraduateStudent (String name, String id, String[] courses, int isResident, CourseList courseList)
   {
     super (name, id);
     this.courses = courses;
     Resident = isResident;
+    this.courseList = courseList;
   }
-  private double creditHours = 120.25; //base resident credit hour
+double creditHours = 120.25; //base resident credit hour
+double courseCost; //stores cost for a course
   public void printInvoice()
   {
     double totalCost = 0;
@@ -1023,17 +1008,24 @@ class UndergraduateStudent extends Student
     	System.out.println("1 Credit Hours = $120.25\n");
     }
     System.out.println("CRN        CR_ PREFIX    CR_HOURS");
-    //add logic for each course here
-    System.out.println("Health & id frees $ 35.00\n");
+    for (String coursePrefix : courses) {
+        Course course = courseList.getCourse(coursePrefix);
+        courseCost = course.getCreditHours() * creditHours; //cost for the current course
+        if (course != null) 
+        {
+            //System.out.printf("%d      %s       %d           $ %.2lf\n", course.getCrn(), course.getPrefix(), course.getCreditHours(), courseCost);
+            System.out.printf("%d      ", course.getCrn());
+            System.out.printf("%s       ", course.getPrefix());
+            System.out.printf("%d           ", course.getCreditHours());
+            System.out.printf("$%.2f\n", courseCost);
+            totalCost += course.getCreditHours() * creditHours;
+        }
+    }
+    System.out.println("\n\t\tHealth & id frees $ 35.00\n");
     System.out.println("--------------------------\n");
     System.out.println("$ " + totalCost);
     //add logic for discount above 500$ payment
-    System.out.println("-$ " + (totalCost * 0.25));
     System.out.println("TOTAL PAYMENTS    $ " + (totalCost - (totalCost*0.25)));
-  }
-  
-  public String[] getCourses(){
-	  return courses;
   }
 }
 
@@ -1069,9 +1061,6 @@ class MsStudent extends GraduateStudent
     System.out.println("\tHealth & id frees $ 35.00\n");
     System.out.println("--------------------------\n");
     System.out.println("TOTAL PAYMENTS    $ " + totalCost);
-  }
-  public String [] getCourses() {
-	  return courses;
   }
 }
 
