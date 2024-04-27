@@ -1067,7 +1067,7 @@ abstract class GraduateStudent extends Student
 
 class MsStudent extends GraduateStudent
 {
-  private String[] courses; //string array might be better since multiple courses?
+  private int[] courses; //string array might be better since multiple courses?
   private CourseList courseList; //courselist array reference
   
   public MsStudent(String name, String id, int[] courses, CourseList courseList)
@@ -1088,7 +1088,7 @@ class MsStudent extends GraduateStudent
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
     System.out.println("1 Credit Hours = $300.00\n");
     System.out.println("CRN        CR_ PREFIX    CR_HOURS");
-    for (String coursePrefix : courses) {
+    for (int coursePrefix : courses) {
         Course course = courseList.getCourse(coursePrefix);
         courseCost = course.getCreditHours() * creditHours; //cost for the current course
         if (course != null) 
