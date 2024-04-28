@@ -26,26 +26,32 @@ public class Driver {
     //all students will be stored here in case other parts of the program need to access, if there is an issue with them being in main pls lmk
     ArrayList<Student> studentList = new ArrayList<Student>();
 
-     int choice;
+     int choice = 1;
           do {
-              System.out.println("Main Menu\n1 : Student Management\n2 : Course Management\n0 : Exit");
-              System.out.print("Enter your selection: ");
-              choice = scanner.nextInt();
-              switch (choice) {
-                  case 1:
-                    StudentManagementMenu(courseList, studentList);
-                      break;
-                  case 2:
-                    CourseManagementMenu(courseList);
-                      break;
-                  case 0:
-                      System.out.println("Exiting...");
-                      break;
-                  default:
-                      System.out.println("Invalid choice. Please try again.");
+        	  try {
+        		  System.out.println("Main Menu\n1 : Student Management\n2 : Course Management\n0 : Exit");
+                  System.out.print("Enter your selection: ");
+                  choice = scanner.nextInt();
+                  switch (choice) {
+                      case 1:
+                        StudentManagementMenu(courseList, studentList);
+                          break;
+                      case 2:
+                        CourseManagementMenu(courseList);
+                          break;
+                      case 0:
+                          System.out.println("Exiting...");
+                          break;
+                      default:
+                          System.out.println("Invalid choice. Please try again.");
+        	  }
+        	  }
+              catch(Exception e) { //handles all exceptions for menu input that isnt a number
+            	  System.out.println("Invalid choice. Please try again.");  
+            	  scanner.nextLine();
               }
           } while (choice != 0);
-
+          
     closeFile(lect, courseList);
   }
 
