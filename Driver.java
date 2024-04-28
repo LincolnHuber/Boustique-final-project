@@ -1,5 +1,5 @@
 //GROUP MEMBERS
-//Lincoln Huber, Brayden Weber, Christian Verde
+//Lincoln Huber, Brayden Weber, Christian Verde, Yorgelis Guanche
 
 import java.io.File;
 import java.io.FileNotFoundException;
