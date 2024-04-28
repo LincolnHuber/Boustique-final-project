@@ -146,6 +146,7 @@ public class Driver {
         case 'A': ////////////////////////////////ADD FUNCTION////////////////////////////////////////////
           System.out.print("Enter Student’s ID: ");
           tempID = stringScan.nextLine().toUpperCase(); //toUpper to make search easier
+          System.out.println("\n");
 
           if (checkID(tempID) == true) // checkID() checks if id is in correct format, then checks for duplicates
           {
