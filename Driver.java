@@ -1,5 +1,5 @@
 //GROUP MEMBERS
-//Lincoln Huber, (Your name here)
+//Lincoln Huber, Brayden Weber (Your name here)
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -659,7 +659,7 @@ class CourseList{
     //loops through all courses
     for(Course course : list) {
       //checks if an enabled course matches crn
-        if((course.getCrn() == crn) && (course.getEnabled() == true)) {
+        if((course.getCrn() == crn) && (course.getEnabled() == true) && !course.hasLabs()) {
           if(!course.Empty()) {
            System.out.println("Course is not empty so it cant be deleted");
           return;
@@ -670,7 +670,7 @@ class CourseList{
 
         }
      }
-    System.out.printf("Course could not be found: invalid crn\n");
+    System.out.printf("invalid crn or class has labs so it cant be deleted\n");
   }
 
   //gets course if its exists otherwise returns null
