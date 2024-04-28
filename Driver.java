@@ -17,15 +17,15 @@ public class Driver {
     CourseList courseList = new CourseList();
     //System.out.printf("File accpeted\n");
     fillCourseList(lect,  courseList);
- 
+
     courseList.printList();
 
-    
 
-   
+
+
     //all students will be stored here in case other parts of the program need to access, if there is an issue with them being in main pls lmk
     ArrayList<Student> studentList = new ArrayList<Student>();
-  
+
      int choice;
           do {
               System.out.println("Main Menu\n1 : Student Management\n2 : Course Management\n0 : Exit");
@@ -45,15 +45,15 @@ public class Driver {
                       System.out.println("Invalid choice. Please try again.");
               }
           } while (choice != 0);
-    
+
     closeFile(lect, courseList);
   }
 
   public static void CourseManagementMenu(CourseList list)
   {
     char courseChoice;
-    	int crn = 0;
-    	String location = null;
+      int crn = 0;
+      String location = null;
         Scanner courseScanner = new Scanner(System.in);
         do {
           System.out.println("\nCourse Management Menu\n\nChoose one of:\n\n  A - Search for a class or lab using the class/lab number\n  B - delete a class\n  C - Add a lab to a class\n  X - Back to main menu ");
@@ -79,19 +79,19 @@ public class Driver {
               crn = Integer.parseInt(courseScanner.next());
               Course tmpCourse = list.getCourse(crn);
               if(tmpCourse != null) { //A valid crn was inputed
-            	  if(tmpCourse.hasLabs()) { // checks if the class can have labs added to it
-	            	  System.out.print("Enter lab's crn: ");
-	            	  crn = Integer.parseInt(courseScanner.next());
-	            	  System.out.print("Enter lab's location: ");
-	            	  location = courseScanner.next();
-	            	  tmpCourse.addLab(new Lab(crn, location));
-            	  }
-            	  else {
-            		  System.out.println("That class can not have any labs\n");
-            	  }
+                if(tmpCourse.hasLabs()) { // checks if the class can have labs added to it
+                  System.out.print("Enter lab's crn: ");
+                  crn = Integer.parseInt(courseScanner.next());
+                  System.out.print("Enter lab's location: ");
+                  location = courseScanner.next();
+                  tmpCourse.addLab(new Lab(crn, location));
+                }
+                else {
+                  System.out.println("That class can not have any labs\n");
+                }
               }
               else {//course could not be found for inputed crn
-            	  System.out.println("Course could not be found: invalid crn\n");
+                System.out.println("Course could not be found: invalid crn\n");
               }
                 break;
             case 'X':
@@ -114,29 +114,31 @@ public class Driver {
     String tempAdvisor;
     String tempSubject;
     int isResident = 0;
+    double tempGpa;
 
     Scanner charScan = new Scanner(System.in);
     Scanner stringScan = new Scanner(System.in); 
     Scanner intScan = new Scanner(System.in);
+    Scanner doubleScan = new Scanner(System.in);
     Scanner resScan = new Scanner(System.in); //scanner used for undergrads to store if they are a resident or not
     //ik these are technically not necessary but it makes it simpler to me, if needed to change back to just one scanner lmk - Chris
-    
+
     do 
     {
       System.out.println("\nStudent Management Menu\n\nChoose one of:\n\n  A - Add a student\n  B - Delete a student\n  C - Print invoice by student ID\n  D - Print all students\n  X - Back to main menu ");
-      
+
       System.out.print("\n\nEnter your selection: ");
-      
+
       //convert to uppercase directly after input
       studentChoice = charScan.next().toUpperCase().charAt(0);
       System.out.print("\n\n");
-      
+
       switch (studentChoice) 
       { //char switch statement, doesnt crash when inputting integers
         case 'A': ////////////////////////////////ADD FUNCTION////////////////////////////////////////////
           System.out.print("Enter Student’s ID: ");
           tempID = stringScan.nextLine().toUpperCase(); //toUpper to make search easier
-          
+
           if (checkID(tempID) == true) //checks if id is in correct format
           {
             System.out.println("VALID ID (see comment)\n"); //checkID() still needs to be updated to check if id is a duplicate
@@ -154,7 +156,7 @@ public class Driver {
 
             break;
           }
-          
+
           System.out.print("Enter Student Type (PhD, MS or Undergrad): ");
           tempType = stringScan.nextLine().toUpperCase(); //toUpper to make search easier
           System.out.print("\n\n");
@@ -210,21 +212,21 @@ public class Driver {
             tempCourses = stringScan.nextLine();
             System.out.print("\n\n");
             String[] tempCourseList = tempCourses.split(","); //seperate courses into array
-            
+
             //converts string array to int array
             int [] crnList = new int[tempCourseList.length];
             int i = 0;
             for(String tempCrn : tempCourseList) {
-            	crnList[i] = Integer.parseInt(tempCrn);
-            	i++;
+              crnList[i] = Integer.parseInt(tempCrn);
+              i++;
             }
-   
+
 
             for (int test : crnList) //verify that all input courses are valid
             {
               Course testCourse = courseList.getCourse(test);
               //System.out.println(test); // <- prints the string getting passed to getCourse()
-              
+
               if (testCourse == null || !(testCourse.isGraduate()))
               {
                 System.out.println("One or more courses were not valid");
@@ -233,37 +235,43 @@ public class Driver {
               System.out.print(testCourse);
             }
 
-	        //increments numPeopleTakingCourse field being stored in course
-	        for(int test : crnList) {
-	        	courseList.getCourse(test).addPerson();
-	        }
-            
+          //increments numPeopleTakingCourse field being stored in course
+          for(int test : crnList) {
+            courseList.getCourse(test).addPerson();
+          }
+
             Student newStudent = new MsStudent(tempName, tempID, crnList, courseList);
             studentList.add(newStudent); //adding new stud to correct list
             System.out.println(tempName + " Added to students!");
-            
+
           }
           else if (tempType.equals("UNDERGRAD")) //UGRAD ADD SECTION///////////////////////////////////
           {
             System.out.print("Enter Student Name: ");
             tempName = stringScan.nextLine();
             System.out.print("\n\n");
-            System.out.print("Is the student a resident? Enter 1 if yes or a 0 if no\n");
+            System.out.print("Is the student a Florida resident? (1 = yes, 0 = no): ");
             isResident = resScan.nextInt();
+            System.out.print("\n\n");
+            if (isResident != 1 && isResident != 0)
+            {
+              System.out.println("Invalid input");
+              break;
+            }
 
             System.out.print("Enter Course Id's Separated by Comma (Ex. 89745,66636): ");
             tempCourses = stringScan.nextLine();
             System.out.print("\n\n");
             String[] tempCourseList = tempCourses.split(","); //seperate courses into array
-            
+
             //changes string array to int array
             int [] crnList = new int[tempCourseList.length];
             int i = 0;
             for(String tempCrn : tempCourseList) {
-            	crnList[i] = Integer.parseInt(tempCrn);
-            	i++;
+              crnList[i] = Integer.parseInt(tempCrn);
+              i++;
             }
-            
+
             for (int test : crnList) //verify that all input courses are valid
             {
               Course testCourse = courseList.getCourse(test);
@@ -275,13 +283,17 @@ public class Driver {
                 return;
               }
             }
-            
+
+            System.out.print("Enter Student GPA: ");
+            tempGpa = doubleScan.nextDouble();
+            System.out.print("\n\n");
+
             //increments numPeopleTakingCourse field being stored in course
             for(int test : crnList) {
-            	courseList.getCourse(test).addPerson();
+              courseList.getCourse(test).addPerson();
             }
 
-            Student newStudent = new UndergraduateStudent(tempName, tempID, crnList, isResident, courseList);
+            Student newStudent = new UndergraduateStudent(tempName, tempID, crnList, isResident, courseList, tempGpa);
             studentList.add(newStudent);
             System.out.println(tempName + " Added to students!");
           }
@@ -290,11 +302,11 @@ public class Driver {
             System.out.println("Invalid Student Type\n");
             break;
           }
-          
+
           break;
-          
+
         case 'B': ////////////////////////////////DELETE FUNCTION////////////////////////////////////////////
-          
+
           System.out.print("Enter Student’s ID: ");
           tempID = stringScan.nextLine().toUpperCase(); //toUpper to make search easier
 
@@ -304,26 +316,26 @@ public class Driver {
             int i = 0;
             //iterates through student list to find one with matching id
             for(Student student : studentList) { 
-            	if(student.getId().compareToIgnoreCase(tempID) == 0){
-            		if(student instanceof UndergraduateStudent) {// checks if student is undergrad student because if so all there courses must store that they aren't taking the class anymore
-            			int [] courses = ((UndergraduateStudent) student).getCourses();
-            			for(int crn : courses) {
-            				courseList.getCourse(crn).removePerson();
-            			}
-            		}
-            		else if(student instanceof MsStudent) {// checks if student is masters student because if so all there courses must store that they aren't taking the class anymore
-            			int [] courses = ((MsStudent) student).getCourses();
-            			for(int crn : courses) {
-            				courseList.getCourse(crn).removePerson();
-            			}
+              if(student.getId().compareToIgnoreCase(tempID) == 0){
+                if(student instanceof UndergraduateStudent) {// checks if student is undergrad student because if so all there courses must store that they aren't taking the class anymore
+                  int [] courses = ((UndergraduateStudent) student).getCourses();
+                  for(int crn : courses) {
+                    courseList.getCourse(crn).removePerson();
+                  }
+                }
+                else if(student instanceof MsStudent) {// checks if student is masters student because if so all there courses must store that they aren't taking the class anymore
+                  int [] courses = ((MsStudent) student).getCourses();
+                  for(int crn : courses) {
+                    courseList.getCourse(crn).removePerson();
+                  }
 
-            		}
+                }
 
-	            	System.out.println("[ " + student.getName() + " ] deleted!");
-	            	studentList.remove(i);
-	            	break;
-            	}
-            	i++;
+                System.out.println("[ " + student.getName() + " ] deleted!");
+                studentList.remove(i);
+                break;
+              }
+              i++;
             }
           }
           else
@@ -339,27 +351,27 @@ public class Driver {
 
             break;
           }
-          
+
           break;
-          
+
         case 'C': ////////////////////////////////INVOICE FUNCTION////////////////////////////////////////////
-          
+
           System.out.print("Enter Student’s ID: ");
           tempID = stringScan.nextLine().toUpperCase(); //toUpper to make search easier
 
           if (checkID(tempID) == true) //checks if id is in correct format
           {
-        	  for(Student student : studentList) {//goes through all students to see if they have matching id 
-        		  if(student.getId().compareToIgnoreCase(tempID) == 0) {
-            		  student.printInvoice(); //calls print invoice and then ends 
-            		  return;
-            	  }
+            for(Student student : studentList) {//goes through all students to see if they have matching id 
+              if(student.getId().compareToIgnoreCase(tempID) == 0) {
+                  student.printInvoice(); //calls print invoice and then ends 
+                  return;
+                }
               }
               System.out.println("No Student has that ID");
-        	  
-        	  
-        	  
-  
+
+
+
+
           }
           else
           { 
@@ -375,52 +387,52 @@ public class Driver {
             break;
           }
           break;
-          
+
         case 'D': ////////////////////////////////PRINT ALL FUNCTION////////////////////////////////////////////
           System.out.println("All students will be printed here\n");
           ArrayList <Student> undergradStudents= new ArrayList <>();
-    	  ArrayList <Student> msStudents= new ArrayList <>();
-    	  ArrayList <Student> phdStudents= new ArrayList <>();
-          
+        ArrayList <Student> msStudents= new ArrayList <>();
+        ArrayList <Student> phdStudents= new ArrayList <>();
+
           for(Student student : studentList) {
-        	  
-        	  if(student instanceof UndergraduateStudent) {
-        		  undergradStudents.add(student);
-        	  }
-        	  else if(student instanceof MsStudent) {
-        		  msStudents.add(student);
-        	  }
-        	  else if(student instanceof PhdStudent){
-        		  phdStudents.add(student);
-        	  }
-        	  
+
+            if(student instanceof UndergraduateStudent) {
+              undergradStudents.add(student);
+            }
+            else if(student instanceof MsStudent) {
+              msStudents.add(student);
+            }
+            else if(student instanceof PhdStudent){
+              phdStudents.add(student);
+            }
+
           }
           System.out.println("PhD Students");
-    	  System.out.println("------------");
-    	  for(Student student: phdStudents) {
-    		  System.out.println("	- " + student.getName());
-    	  }
-    	  System.out.println("");
-    	  
-    	  System.out.println("MS Students");
-    	  System.out.println("------------");
-    	  for(Student student: msStudents) {
-    		  System.out.println("	- " + student.getName());
-    	  }
-    	  System.out.println("");
-          
-    	  System.out.println("Undergraduate Students");
-    	  System.out.println("------------");
-    	  for(Student student: undergradStudents) {
-    		  System.out.println("	- " + student.getName());
-    	  }
-    	  System.out.println("");
+        System.out.println("------------");
+        for(Student student: phdStudents) {
+          System.out.println("	- " + student.getName());
+        }
+        System.out.println("");
+
+        System.out.println("MS Students");
+        System.out.println("------------");
+        for(Student student: msStudents) {
+          System.out.println("	- " + student.getName());
+        }
+        System.out.println("");
+
+        System.out.println("Undergraduate Students");
+        System.out.println("------------");
+        for(Student student: undergradStudents) {
+          System.out.println("	- " + student.getName());
+        }
+        System.out.println("");
           break;
-          
+
         case 'X':
           System.out.println("Back to main menu\n");
           break;
-          
+
         default:
           System.out.println("Invalid choice. Please try again.\n");
       }		
@@ -554,7 +566,7 @@ public class Driver {
   public static boolean checkCourses(String courses) //returns true if courses are valid, false if not
   {
     String[] checkCourseList = courses.split(",");
-    
+
     for(String tempCourse : checkCourseList) 
     {
       if(tempCourse.length() != 7) 
@@ -572,9 +584,9 @@ public class Driver {
       }
 
       //if 
-    
-      
-      
+
+
+
     }
 
     return true;
@@ -640,16 +652,16 @@ class CourseList{
     //loops through all courses
     for(Course course : list) {
       //checks if an enabled course matches crn
-	      if((course.getCrn() == crn) && (course.getEnabled() == true)) {
-	    	  if(!course.Empty()) {
-	    		 System.out.println("Course is not empty so it cant be deleted");
-	    		return;
-	    	  }
-		      course.setEnabled(false);
-		      System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
-		      return;
+        if((course.getCrn() == crn) && (course.getEnabled() == true)) {
+          if(!course.Empty()) {
+           System.out.println("Course is not empty so it cant be deleted");
+          return;
+          }
+          course.setEnabled(false);
+          System.out.printf("[ %d,%s,%s ] deleted!\n",course.getCrn(), course.getPrefix(), course.getTitle());
+          return;
 
-	      }
+        }
      }
     System.out.printf("Course could not be found: invalid crn\n");
   }
@@ -896,30 +908,30 @@ class Course {
     return hasLab;
   }
   public boolean isGraduate() {
-	  if(classLevel.compareToIgnoreCase("graduate") == 0) {
-		  return true;
-	  }
-	  else {
-		  return false;
-	  }
+    if(classLevel.compareToIgnoreCase("graduate") == 0) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   public boolean isUndergraduate() {
-	  if(classLevel.compareToIgnoreCase("undergraduate") == 0) {
-		  return true;
-	  }
-	  else {
-		  return false;
-	  }
+    if(classLevel.compareToIgnoreCase("undergraduate") == 0) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   public void addPerson() {
-	  numPeopleTakingCourse++;
+    numPeopleTakingCourse++;
   }
-  
+
   public void removePerson() {
-	  numPeopleTakingCourse--;
+    numPeopleTakingCourse--;
   }
 }
-  
+
 
 class Lab {
   private int crn;
@@ -1005,30 +1017,33 @@ class UndergraduateStudent extends Student
   private int[] courses; //string array might be better since multiple courses?
   private CourseList courseList; //courselist array reference
   private int Resident; //0 means not resident, 1 means yes resident
-  public UndergraduateStudent (String name, String id, int[] courses, int isResident, CourseList courseList)
+  private double gpa;
+  private double discount;
+  public UndergraduateStudent (String name, String id, int[] courses, int isResident, CourseList courseList, double gpa)
   {
     super (name, id);
     this.courses = courses;
     Resident = isResident;
     this.courseList = courseList;
+    this.gpa = gpa;
   }
   private double creditHours = 120.25; //base resident credit hour
   private double courseCost; //stores cost for a course
   public void printInvoice()
   {
     double totalCost = 0;
-    System.out.println("VALENCE COLLEGE");
+    System.out.println("\nVALENCE COLLEGE");
     System.out.println("ORLANDO FL 10101");
     System.out.println("--------------------------\n");
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
     if (Resident == 0)
     {
-    	System.out.println("\n1 Credit Hour = $240.50\n");
-    	creditHours = 240.50;
+      System.out.println("\n1 Credit Hour = $240.50\n");
+      creditHours = 240.50;
     }
     else
     {
-    	System.out.println("\n1 Credit Hours = $120.25\n");
+      System.out.println("\n1 Credit Hours = $120.25\n");
     }
     System.out.println("CRN        CR_ PREFIX    CR_HOURS");
     for (int crn : courses) {
@@ -1044,17 +1059,28 @@ class UndergraduateStudent extends Student
             totalCost += course.getCreditHours() * creditHours;
         }
     }
-    System.out.println("\n\t\tHealth & id fees    $ 35.00\n");
-    System.out.println("--------------------------\n");
-    System.out.println("$ " + totalCost);
-    //add logic for discount above 500$ payment
-    System.out.println("TOTAL PAYMENTS    $ " + (totalCost - (totalCost*0.25)));
+    System.out.println("\n\t\t\t\tHealth & id fees    $ 35.00\n");
+    totalCost += 35;
+    System.out.println("------------------------------------------\n");
+    if (totalCost > 500 && gpa >= 3.5) //gpa discount logic
+    {
+      System.out.println("\t\t\t\t\t\t\t\t\t$ " + totalCost);
+      discount = totalCost * 0.25;
+      System.out.printf("\t\t\t\t\t\t\t\t\t-$ %.2f\n", discount);
+      System.out.println("\t\t\t\t\t\t\t\t-----------");
+      System.out.printf("\t\t\t\t\tTOTAL PAYMENTS   $ %.2f\n", (totalCost - discount));
+    }
+    else //no gpa discount
+    {
+      System.out.printf("\t\t\t\t\tTOTAL PAYMENTS   $ %.2f\n", totalCost); 
+    }
+    
   }
-  
+
   public int [] getCourses() {
-	  return courses;
+    return courses;
   }
-  
+
 }
 
 abstract class GraduateStudent extends Student
@@ -1069,7 +1095,7 @@ class MsStudent extends GraduateStudent
 {
   private int[] courses; //string array might be better since multiple courses?
   private CourseList courseList; //courselist array reference
-  
+
   public MsStudent(String name, String id, int[] courses, CourseList courseList)
   {
     super (name, id);
@@ -1082,7 +1108,7 @@ class MsStudent extends GraduateStudent
   {
     double totalCost = 0;
     totalCost += 35; //adds health and id fees
-    System.out.println("VALENCE COLLEGE");
+    System.out.println("\nVALENCE COLLEGE");
     System.out.println("ORLANDO FL 10101");
     System.out.println("--------------------------\n");
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
@@ -1105,11 +1131,11 @@ class MsStudent extends GraduateStudent
     System.out.println("--------------------------\n");
     System.out.println("\tTOTAL PAYMENTS    $ " + totalCost);
   }
-  
+
   public int [] getCourses() {
-	  return courses;
+    return courses;
   }
-  
+
 }
 
 class PhdStudent extends GraduateStudent
@@ -1133,30 +1159,30 @@ class PhdStudent extends GraduateStudent
     int numEntries = labCrns.size(); //gets amount of labs the phd student supervises
     if (numEntries >= 3) //logic for lab supervision discounts
     {
-    	totalCost = 35; //sets cost equal to only the health and id fees
+      totalCost = 35; //sets cost equal to only the health and id fees
     }
     else if (numEntries == 2)
     {
-    	totalCost = totalCost * .5;
+      totalCost = totalCost * .5;
     }
-    System.out.println("VALENCE COLLEGE");
+    System.out.println("\nVALENCE COLLEGE");
     System.out.println("ORLANDO FL 10101");
     System.out.println("--------------------------\n");
     System.out.println("Fee Invoice Prepared for Student: \n" + getId() + "-" + getName());
     System.out.println("\n\nRESEARCH");
     if(numEntries >= 3) //prints minus 700 if the PHD student supervises 3 or more labs
     {
-    	System.out.println(this.subject + "\t\t $ -700.00\n");
+      System.out.println(this.subject + "\t\t $ -700.00\n");
     }
     else
     {
-    	System.out.println(this.subject + "\t\t $ 700.00\n");
+      System.out.println(this.subject + "\t\t $ 700.00\n");
     }
     System.out.println("\tHealth & id fees $ 35.00\n");
     System.out.println("--------------------------\n");
     //logic to remove costs based on entries in array list
     System.out.printf("\tTOTAL PAYMENTS    $ %.2f\n\n", totalCost);
-   
+
   }
 }
 
