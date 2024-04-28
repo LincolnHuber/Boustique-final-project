@@ -1,3 +1,6 @@
+//GROUP MEMBERS
+//Lincoln Huber, (Your name here)
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -7,7 +10,6 @@ import java.util.Scanner;
 import java.util.*;
 import java.io.Serializable;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 public class Driver {
   private static Scanner scanner = new Scanner(System.in);
   public static void main(String[] args) {
@@ -18,7 +20,7 @@ public class Driver {
     //System.out.printf("File accpeted\n");
     fillCourseList(lect,  courseList);
 
-    courseList.printList();
+    //courseList.printList(); used in beginning when testing input but no longer needed
 
 
 
