@@ -1168,8 +1168,8 @@ class MsStudent extends GraduateStudent
     this.courses = courses;
     this.courseList = courseList;
   }
-  double courseCost; //stores cost for a course
-  double creditHours = 300.00;
+  private double courseCost; //stores cost for a course
+  private double creditHours = 300.00;
   public void printInvoice()
   {
     double totalCost = 0;
