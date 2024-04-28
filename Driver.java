@@ -147,9 +147,68 @@ public class Driver {
           System.out.print("Enter Student’s ID: ");
           tempID = stringScan.nextLine().toUpperCase(); //toUpper to make search easier
 
-          if (checkID(tempID) == true) //checks if id is in correct format
+          if (checkID(tempID) == true) // checkID() checks if id is in correct format, then checks for duplicates
           {
-            System.out.println("VALID ID (see comment)\n"); //checkID() still needs to be updated to check if id is a duplicate
+            ArrayList <Student> dupeUndergradStudents= new ArrayList <>();
+            ArrayList <Student> dupeMsStudents= new ArrayList <>();
+            ArrayList <Student> dupePhdStudents= new ArrayList <>();
+
+            int dupe = 0;
+
+            for(Student student : studentList) 
+            {
+
+              if(student instanceof UndergraduateStudent) 
+              {
+                dupeUndergradStudents.add(student);
+              }
+              else if(student instanceof MsStudent) 
+              {
+                dupeMsStudents.add(student);
+              }
+              else if(student instanceof PhdStudent)
+              {
+                dupePhdStudents.add(student);
+              }
+
+            }
+
+            for(Student student: dupePhdStudents) 
+            { 
+              if (tempID.equals(student.getId()))
+              {
+                dupe = 1;
+              }
+            }
+
+            for(Student student: dupeMsStudents) 
+            { 
+              if (tempID.equals(student.getId()))
+              {
+                dupe = 1;
+              }
+            }
+
+            for(Student student: dupeUndergradStudents) 
+            { 
+              if (tempID.equals(student.getId()))
+              {
+                dupe = 1;
+              }
+            }
+
+            if (dupe == 1)
+            {
+              try
+              {
+                throw new IdException();
+              }
+              catch (IdException e)
+              {
+                System.out.println(e.excMsg());
+              }
+              break;
+            }
           }
           else
           { 
