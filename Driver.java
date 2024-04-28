@@ -238,7 +238,6 @@ public class Driver {
                 System.out.println("One or more courses were not valid");
                 return;
               }
-              System.out.print(testCourse);
             }
 
           //increments numPeopleTakingCourse field being stored in course
